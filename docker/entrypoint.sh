@@ -1,7 +1,5 @@
 #!/bin/sh
-set -e
 
-# Railway MySQL plugin exposes MYSQL_URL; Symfony expects DATABASE_URL
 if [ -z "$DATABASE_URL" ] && [ -n "$MYSQL_URL" ]; then
   export DATABASE_URL="$MYSQL_URL"
 fi
@@ -9,14 +7,22 @@ fi
 PORT="${PORT:-8000}"
 export PORT
 
-wait_for_database() {
+mkdir -p var/cache var/log config/jwt public/bundles
+chmod -R 777 var 2>/dev/null || true
+
+echo "Starting server on 0.0.0.0:${PORT}..."
+php -S "0.0.0.0:${PORT}" -t public/ &
+SERVER_PID=$!
+sleep 1
+
+# Background bootstrap — must not block /health.php
+(
   if [ -n "$DATABASE_URL" ]; then
-    echo "Waiting for database (DATABASE_URL)..."
+    echo "Waiting for database..."
     i=0
-    while [ "$i" -lt 60 ]; do
+    while [ "$i" -lt 45 ]; do
       if php -r '
         $url = getenv("DATABASE_URL");
-        if (!$url) { exit(1); }
         $p = parse_url($url);
         $host = $p["host"] ?? "127.0.0.1";
         $port = $p["port"] ?? 3306;
@@ -30,76 +36,28 @@ wait_for_database() {
         }
       ' 2>/dev/null; then
         echo "Database is ready."
-        return 0
+        break
       fi
       i=$((i + 1))
       sleep 2
     done
-    echo "Database did not become ready in time."
-    return 1
   fi
 
-  DB_HOST="${DB_HOST:-paw_mysql}"
-  DB_USER="${MYSQL_USER:-paw_user}"
-  DB_PASS="${MYSQL_PASSWORD:-paw_password}"
+  if [ ! -f config/jwt/private.pem ]; then
+    php bin/console lexik:jwt:generate-keypair --skip-if-exists --no-interaction 2>/dev/null || true
+  fi
 
-  echo "Waiting for MySQL at ${DB_HOST}..."
-  i=0
-  while [ "$i" -lt 30 ]; do
-    if php -r "new PDO('mysql:host=${DB_HOST};port=3306', '${DB_USER}', '${DB_PASS}');" 2>/dev/null; then
-      echo "MySQL is ready."
-      return 0
-    fi
-    i=$((i + 1))
-    sleep 2
-  done
-  echo "MySQL did not become ready in time."
-  return 1
-}
+  php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration 2>/dev/null || true
 
-mkdir -p var/cache var/log
-chmod -R 777 var 2>/dev/null || true
+  if [ "${CREATE_ADMIN:-1}" = "1" ]; then
+    php bin/console app:create-admin admin admin123 --force --no-interaction 2>/dev/null || true
+  fi
 
-if [ "${SKIP_DB_WAIT:-0}" != "1" ]; then
-  wait_for_database || exit 1
-else
-  echo "Skipping database wait (SKIP_DB_WAIT=1)."
-fi
+  php bin/console assets:install public --no-interaction 2>/dev/null || true
+  php bin/console cache:clear --env="${APP_ENV:-prod}" --no-warmup 2>/dev/null || true
 
-if [ ! -f config/jwt/private.pem ]; then
-  echo "Generating JWT keys..."
-  php bin/console lexik:jwt:generate-keypair --skip-if-exists --no-interaction
-fi
+  echo "Bootstrap complete."
+) &
 
-# Start HTTP server FIRST so Railway healthcheck can reach /health.php
-echo "Starting application on 0.0.0.0:${PORT}..."
-php -S "0.0.0.0:${PORT}" -t public/ &
-SERVER_PID=$!
-
-# Give the server a moment to bind
-sleep 2
-
-echo "Running migrations..."
-php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || true
-
-if [ "${CREATE_ADMIN:-1}" = "1" ]; then
-  echo "Ensuring admin user exists..."
-  php bin/console app:create-admin admin admin123 --force --no-interaction 2>/dev/null || true
-fi
-
-echo "Installing assets..."
-php bin/console assets:install public --no-interaction 2>/dev/null || true
-
-APP_ENV="${APP_ENV:-dev}"
-if [ "$APP_ENV" = "prod" ]; then
-  php bin/console cache:clear --env=prod --no-warmup 2>/dev/null || true
-  php bin/console cache:warmup --env=prod --no-debug 2>/dev/null || true
-else
-  php bin/console cache:clear --no-warmup 2>/dev/null || true
-fi
-
-# Verify app can boot (logs clear errors to Railway deploy logs)
-php bin/console about --env="${APP_ENV}" --no-interaction 2>&1 | head -5 || true
-
-echo "Application ready (pid ${SERVER_PID})."
+echo "Server ready (pid ${SERVER_PID})."
 wait $SERVER_PID

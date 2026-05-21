@@ -30,7 +30,8 @@ On your **Final_Pawhub** (web) service, set:
 | `APP_ENV` | `prod` |
 | `APP_DEBUG` | `0` |
 | `APP_SECRET` | long random string |
-| `DATABASE_URL` | `${{MySQL.MYSQL_URL}}` (reference from MySQL plugin) |
+| `DATABASE_URL` | `${{MySQL.MYSQL_URL}}?serverVersion=8.0&charset=utf8mb4` |
+| `JWT_PASSPHRASE` | any random string (16+ chars) |
 | `DEFAULT_URI` | `https://finalpawhub-production.up.railway.app` |
 | `JWT_PASSPHRASE` | random string (same as used when generating JWT keys) |
 | `CORS_ALLOW_ORIGIN` | `^https?://.*$` (if using mobile app) |
