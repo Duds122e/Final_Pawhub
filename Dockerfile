@@ -25,12 +25,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-COPY composer.json composer.lock symfony.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
-
+# Copy full app so Composer can run Symfony scripts (generates autoload_runtime.php)
 COPY . .
 
-RUN composer dump-autoload --optimize --classmap-authoritative --no-dev \
+# Must NOT use --no-scripts: Symfony Runtime plugin creates vendor/autoload_runtime.php
+RUN composer install --no-dev --optimize-autoloader --no-interaction \
     && mkdir -p var/cache var/log \
     && chmod -R 777 var
 
@@ -38,7 +37,6 @@ COPY docker/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh \
     && chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Railway injects PORT at runtime (do not hardcode 8000)
 ENV APP_ENV=prod
 ENV APP_DEBUG=0
 
