@@ -29,13 +29,19 @@ ENV APP_ENV=prod
 ENV APP_DEBUG=0
 ENV APP_SECRET=build_time_secret_replace_in_railway_vars
 ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV COMPOSER_MEMORY_LIMIT=-1
+
+# Install dependencies first (better layer cache)
+COPY composer.json composer.lock symfony.lock ./
+RUN composer install --no-dev --no-interaction --prefer-dist --no-scripts --no-autoloader
 
 COPY . .
+COPY .env.example .env
 
-# Prod APP_ENV avoids dev bundles during cache:clear in post-install-cmd.
-# Symfony Runtime plugin generates vendor/autoload_runtime.php on install.
-RUN composer install --no-dev --optimize-autoloader --no-interaction \
-    && mkdir -p var/cache var/log \
+# Generate autoload + Symfony Runtime file without running cache:clear / importmap
+RUN composer dump-autoload --optimize --classmap-authoritative --no-dev \
+    && test -f vendor/autoload_runtime.php \
+    && mkdir -p var/cache var/log public/bundles \
     && chmod -R 777 var
 
 COPY docker/entrypoint.sh /usr/local/bin/docker-entrypoint.sh

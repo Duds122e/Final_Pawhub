@@ -1,5 +1,6 @@
 .git
 .gitignore
+.env
 .env.local
 .env.*.local
 var/
@@ -15,6 +16,10 @@ agent-transcripts/
 profiler.html
 server.log
 login.html
+login-post.html
+login2.html
+login3.html
+cookie.txt
 create_test_user.php
 create_user.sql
 reset_password.php
@@ -23,3 +28,5 @@ d.yaml
 ddd.yaml
 dd.yaml
 docker-compose.yaml
+!!.yaml
+paw/
