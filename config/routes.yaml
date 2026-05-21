@@ -18,6 +18,22 @@ home:
 api_login:
     path: /api/login
 
+# Mobile JSON catalog (plain arrays for React Native)
+api_catalog_services:
+    path: /api/catalog/services
+    controller: App\Controller\ApiServiceCatalogController::list
+    methods: [GET]
+
+api_catalog_appointments:
+    path: /api/catalog/appointments
+    controller: App\Controller\ApiAppointmentCatalogController::list
+    methods: [GET]
+
+api_catalog_appointments_book:
+    path: /api/catalog/appointments
+    controller: App\Controller\ApiAppointmentCatalogController::book
+    methods: [POST]
+
 # Appointment routes
 appointment_index:
     path: /appointment
