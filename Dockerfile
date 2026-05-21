@@ -37,6 +37,9 @@ RUN composer install --no-dev --no-interaction --prefer-dist --no-scripts --no-a
 
 COPY . .
 
+# Symfony requires a readable .env at boot; Railway/OS env vars override these defaults
+COPY .env.docker .env
+
 # Generate autoload + Symfony Runtime file without running cache:clear / importmap
 # Railway env vars override defaults at runtime (do not bake secrets into .env)
 RUN composer dump-autoload --optimize --classmap-authoritative --no-dev \
