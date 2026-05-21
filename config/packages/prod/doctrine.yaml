@@ -1,0 +1,5 @@
+# Avoid ORM cache pool issues on ephemeral containers (Railway/Docker)
+doctrine:
+    orm:
+        query_cache_driver: null
+        result_cache_driver: null

@@ -47,7 +47,7 @@ sleep 1
     php bin/console lexik:jwt:generate-keypair --skip-if-exists --no-interaction 2>/dev/null || true
   fi
 
-  php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration 2>/dev/null || true
+  php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration 2>&1 || true
 
   if [ "${CREATE_ADMIN:-1}" = "1" ]; then
     php bin/console app:create-admin admin admin123 --force --no-interaction 2>/dev/null || true

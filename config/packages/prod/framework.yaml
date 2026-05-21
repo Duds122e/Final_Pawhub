@@ -1,3 +1,7 @@
 framework:
     trusted_proxies: 'REMOTE_ADDR'
     trusted_headers: ['x-forwarded-for', 'x-forwarded-host', 'x-forwarded-proto', 'x-forwarded-port']
+    session:
+        cookie_secure: auto
+        cookie_httponly: true
+        cookie_samesite: lax
