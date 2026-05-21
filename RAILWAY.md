@@ -84,6 +84,7 @@ PHP Development Server started
 
 | Issue | Fix |
 |-------|-----|
+| 500 Internal Server Error | Open `/health.php?db=1` — if `db` is not `ok`, fix `DATABASE_URL`. Check deploy logs for `ERROR: DATABASE_URL is not set`. Set `APP_DEBUG=1` briefly to see the real error. |
 | 502 Bad Gateway | Check deploy logs; confirm `DATABASE_URL` is set |
 | DB connection failed | Add `?serverVersion=8.0` to `DATABASE_URL` |
 | Migrations fail | Ensure MySQL service is in same project and linked |
