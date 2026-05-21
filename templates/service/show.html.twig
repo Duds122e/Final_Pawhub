@@ -1,0 +1,168 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ service.name }} — PAWHUB{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .page-wrapper {
+            padding: 40px;
+            background: linear-gradient(135deg, #FFF8F3 0%, #FFEEE5 50%, #FFE8E8 100%);
+            min-height: calc(100vh - 80px);
+        }
+        .service-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .service-header h1 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            color: #2D3436;
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        .service-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #E85A71 0%, #FF8C42 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(232, 90, 113, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(232, 90, 113, 0.4);
+        }
+        .btn-danger {
+            background: linear-gradient(90deg, #E85A71 0%, #FF6B6B 100%);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(232, 90, 113, 0.3);
+        }
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(232, 90, 113, 0.4);
+        }
+        .service-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 40px rgba(232, 90, 113, 0.08);
+        }
+        .detail-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .detail-label {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #E85A71;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .detail-value {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            color: #2D3436;
+            font-weight: 500;
+        }
+        .detail-value.price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #E85A71;
+        }
+        .detail-value.description {
+            line-height: 1.7;
+            color: #636E72;
+        }
+        @media (max-width: 768px) {
+            .page-wrapper {
+                padding: 20px;
+            }
+            .service-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            .service-header h1 {
+                font-size: 1.75rem;
+            }
+            .service-actions {
+                width: 100%;
+            }
+            .btn {
+                flex: 1;
+                justify-content: center;
+            }
+            .service-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="service-container">
+        <div class="service-header">
+            <h1>🔧 {{ service.name }}</h1>
+            <div class="service-actions">
+                <a href="{{ path('app_service_edit', {id: service.id}) }}" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <form method="post" action="{{ path('app_service_delete', {id: service.id}) }}" style="display:inline-block;" onsubmit="return confirm('Delete this service?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ service.id) }}">
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="service-card">
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Service Name</span>
+                    <span class="detail-value">{{ service.name }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Description</span>
+                    <span class="detail-value description">{{ service.description }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Price</span>
+                    <span class="detail-value price">${{ service.price }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

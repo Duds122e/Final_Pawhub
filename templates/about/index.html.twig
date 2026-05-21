@@ -1,0 +1,587 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}About Us — PAWHUB{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+            min-height: 100vh;
+        }
+        
+        body {
+            background: linear-gradient(180deg, #FFF8F3 0%, #FFEEE5 100%);
+        }
+
+        /* Navigation - Matching Homepage */
+        .main-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 4rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .main-nav .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .main-nav .logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .main-nav .logo span {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #2D3436;
+        }
+
+        .main-nav .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .main-nav .nav-links a {
+            color: #636E72;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .main-nav .nav-links a:hover,
+        .main-nav .nav-links a.active {
+            color: #E85A71;
+        }
+
+        .main-nav .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .main-nav .phone-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #E85A71;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .user-icon {
+            width: 35px;
+            height: 35px;
+            background: #FFE5E5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #E85A71;
+        }
+
+        /* About Section */
+        .about-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 7rem 4rem 5rem 4rem;
+            box-sizing: border-box;
+        }
+
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 4rem;
+            align-items: center;
+            width: 100%;
+        }
+
+        .about-content {
+            flex: 1;
+        }
+
+        .about-tagline {
+            color: #FF8C42;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .about-tagline::before {
+            content: '';
+            width: 30px;
+            height: 2px;
+            background: #FF8C42;
+        }
+
+        .about-title {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2D3436;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-title span {
+            color: #FF6B9D;
+        }
+
+        .about-text {
+            color: #636E72;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .about-features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .about-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+
+        .about-feature-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #FF8C42 0%, #FF6B9D 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .about-feature-text h4 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1.1rem;
+            color: #2D3436;
+            margin-bottom: 0.3rem;
+        }
+
+        .about-feature-text p {
+            color: #636E72;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .about-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .about-image-wrapper {
+            position: relative;
+            width: 400px;
+            height: 400px;
+        }
+
+        .about-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            box-shadow: 0 20px 60px rgba(255, 140, 66, 0.2);
+        }
+
+        .about-image-decoration {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #FFB347 0%, #FF8C42 100%);
+            border-radius: 50%;
+            z-index: -1;
+            opacity: 0.8;
+        }
+
+        /* Meet the Team Section */
+        .team-section {
+            padding: 5rem 4rem;
+            background: white;
+        }
+
+        .team-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .team-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .team-header h2 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #636E72;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .team-highlight {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            align-items: flex-start;
+        }
+
+        .team-highlight-image {
+            flex: 1;
+        }
+
+        .team-highlight-image img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .team-lead {
+            flex: 0 0 300px;
+            text-align: center;
+            border: 1px solid #E5E5E5;
+            border-radius: 10px;
+            padding: 2rem;
+        }
+
+        .team-lead img {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+        }
+
+        .team-lead h3 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1.3rem;
+            color: #2D3436;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-lead p {
+            color: #636E72;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .team-member {
+            text-align: center;
+        }
+
+        .team-member img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .team-member h4 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1rem;
+            color: #2D3436;
+            margin-bottom: 0.3rem;
+            letter-spacing: 1px;
+        }
+
+        .team-member p {
+            color: #636E72;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Shop Section */
+        .shop-section {
+            padding: 5rem 4rem;
+            background: #FAFAFA;
+        }
+
+        .shop-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .shop-header {
+            margin-bottom: 3rem;
+        }
+
+        .shop-header h2 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #636E72;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .shop-image {
+            margin-bottom: 3rem;
+        }
+
+        .shop-image img {
+            width: 100%;
+            max-width: 900px;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .shop-text {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: justify;
+        }
+
+        .shop-text p {
+            color: #636E72;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .shop-text p:last-child {
+            font-weight: 700;
+            color: #2D3436;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            .about-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .about-features {
+                grid-template-columns: 1fr;
+            }
+
+            .about-feature {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .about-tagline {
+                justify-content: center;
+            }
+
+            .about-image-wrapper {
+                width: 300px;
+                height: 300px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .about-section {
+                padding: 7rem 1.5rem 3rem 1.5rem;
+            }
+
+            .about-title {
+                font-size: 2rem;
+            }
+
+            .main-nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .main-nav .nav-links {
+                display: none;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="logo">
+            <img src="{{ asset('images/logo/logo-charity.png') }}" alt="PAWHUB Logo">
+            <span>PAWHUB</span>
+        </div>
+        <div class="nav-links">
+            <a href="{{ path('app_home') }}">Homepage</a>
+            <a href="{{ path('app_about') }}" class="active">About Us</a>
+            <a href="{{ path('app_service') }}">Services</a>
+            <a href="{{ path('app_contact') }}">Contact Us</a>
+        </div>
+        <div class="nav-right">
+            <a href="tel:+639123456789" class="phone-btn">
+                <i class="fas fa-phone-alt"></i>
+                <span>09479822291</span>
+            </a>
+            <div class="user-icon">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="about-container">
+            <!-- Left Side - Content -->
+            <div class="about-content">
+                <div class="about-tagline">Who We Are</div>
+                <h1 class="about-title">
+                    About <span>PAWHUB</span>
+                </h1>
+                <p class="about-text">
+                    PAWHUB is your one-stop destination for all things pet! We help you find, care for, and love your furry friends with ease and joy. Our playful, modern approach makes pet care fun and accessible for everyone.
+                </p>
+                
+                <div class="about-features">
+                    <div class="about-feature">
+                        <div class="about-feature-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="about-feature-text">
+                            <h4>Made with Love</h4>
+                            <p>Every service we provide is crafted with genuine care for your pets</p>
+                        </div>
+                    </div>
+                    <div class="about-feature">
+                        <div class="about-feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="about-feature-text">
+                            <h4>Trusted Care</h4>
+                            <p>Professional veterinary services you can rely on</p>
+                        </div>
+                    </div>
+                    <div class="about-feature">
+                        <div class="about-feature-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="about-feature-text">
+                            <h4>Safe Adoption</h4>
+                            <p>Find your perfect companion through our secure adoption process</p>
+                        </div>
+                    </div>
+                    <div class="about-feature">
+                        <div class="about-feature-icon">
+                            <i class="fas fa-smile"></i>
+                        </div>
+                        <div class="about-feature-text">
+                            <h4>Happy Pets</h4>
+                            <p>We ensure every pet finds a loving forever home</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Side - Image -->
+            <div class="about-image">
+                <div class="about-image-wrapper">
+                    <div class="about-image-decoration"></div>
+                    <img src="{{ asset('images/cutie.png') }}" alt="Happy Pet">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Meet the Team Section -->
+    <section class="team-section">
+        <div class="team-container">
+            <div class="team-header">
+                <h2>Meet the Team</h2>
+            </div>
+            
+            <div class="team-highlight">
+                <div class="team-lead">
+                    <img src="{{ asset('images/CEO.JPG') }}" alt="Paul - Founder & CEO" onerror="this.src='https://images.unsplash.com/photo-1560250097-0b93528c311a?w=300&h=300&fit=crop'">
+                    <h3>PAUL</h3>
+                    <p>FOUNDER & CEO</p>
+                </div>
+            </div>
+            
+            <div class="team-grid">
+                <div class="team-member">
+                    <img src="{{ asset('images/pets/jk.jpg') }}" alt="Giselle" onerror="this.src='https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop'">
+                    <h4>MORLACK</h4>
+                    <p>PET CARE COORDINATOR</p>
+                </div>
+                <div class="team-member">
+                    <img src="{{ asset('images/pets/dogg.jpg') }}" alt="Karina" onerror="this.src='https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop'">
+                    <h4>BOGART</h4>
+                    <p>HEAD GROOMER</p>
+                </div>
+                <div class="team-member">
+                    <img src="{{ asset('images/pets/rabbit1.jpg') }}" alt="Nigel" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=300&fit=crop'">
+                    <h4>ISTIPEN</h4>
+                    <p>HEAD TRAINER</p>
+                </div>
+                <div class="team-member">
+                    <img src="{{ asset('images/pets/cat1.jpg') }}" alt="Winter" onerror="this.src='https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop'">
+                    <h4>ISTER</h4>
+                    <p>VETERINARY SPECIALIST</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About PAWHUB Section -->
+    <section class="shop-section">
+        <div class="shop-container">
+            <div class="shop-header">
+                <h2>PAWHUB PET CARE</h2>
+            </div>
+            <div class="shop-image">
+                <img src="{{ asset('images/IMG_1767.jpg') }}" alt="PAWHUB Pet Care">
+            </div>
+            <div class="shop-text">
+                <p>PAWHUB is the premier pet care destination in the heart of the city, offering a comprehensive range of services designed to keep your furry friends happy, healthy, and loved. From grooming and boarding to training and veterinary care, we provide everything your pet needs under one roof.</p>
+                <p>Our services are delivered with passion and expertise by certified professionals who treat every pet like family. We use only the highest quality products and follow best practices in animal care, ensuring your pets receive the best possible experience.</p>
+                <p>From daily grooming sessions to comfortable boarding facilities and expert training programs, our dedicated team goes above and beyond. We believe every pet deserves personalized attention, and we tailor our services to meet the unique needs of each furry friend.</p>
+                <p>We are proud to partner with local veterinarians and pet suppliers, building a community that puts pet welfare first. This commitment ensures the highest standards of care while supporting the local businesses that help our pets thrive.</p>
+                <p>Here at PAWHUB, we make every tail wag.</p>
+            </div>
+        </div>
+    </section>
+{% endblock %}

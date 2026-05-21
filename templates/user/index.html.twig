@@ -1,0 +1,243 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Users — PAWHUB{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .page-wrapper {
+            padding: 40px;
+            background: linear-gradient(135deg, #FFF8F3 0%, #FFEEE5 50%, #FFE8E8 100%);
+            min-height: calc(100vh - 80px);
+        }
+        .users-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .users-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .users-header h1 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            color: #2D3436;
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .users-header p {
+            color: #636E72;
+            font-size: 1rem;
+        }
+        .create-btn {
+            display: inline-block;
+            background: linear-gradient(90deg, #E85A71 0%, #FF8C42 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(232, 90, 113, 0.3);
+            margin-bottom: 1.5rem;
+        }
+        .create-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(232, 90, 113, 0.4);
+        }
+        .users-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 40px rgba(232, 90, 113, 0.08);
+        }
+        .users-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        .users-table thead th {
+            background: #FFF8F3;
+            color: #E85A71;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-weight: 600;
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 2px solid #FFE5E5;
+        }
+        .users-table thead th:first-child {
+            border-radius: 10px 0 0 0;
+        }
+        .users-table thead th:last-child {
+            border-radius: 0 10px 0 0;
+            text-align: right;
+        }
+        .users-table tbody tr {
+            transition: background 0.2s ease;
+        }
+        .users-table tbody tr:hover {
+            background: #FFF8F3;
+        }
+        .users-table tbody td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #FFE5E5;
+            color: #2D3436;
+        }
+        .users-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        .users-table tbody tr:last-child td:first-child {
+            border-radius: 0 0 0 10px;
+        }
+        .users-table tbody tr:last-child td:last-child {
+            border-radius: 0 0 10px 0;
+        }
+        .users-table tbody td:last-child {
+            text-align: right;
+        }
+        .role-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: #FFE5E5;
+            color: #E85A71;
+            margin-right: 4px;
+        }
+        .role-admin {
+            background: #E85A71;
+            color: white;
+        }
+        .btn-view, .btn-edit {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .btn-view {
+            background: #FFF8F3;
+            color: #E85A71;
+            border: 1px solid #FFE5E5;
+        }
+        .btn-view:hover {
+            background: #E85A71;
+            color: white;
+        }
+        .btn-edit {
+            background: #FFE5E5;
+            color: #E85A71;
+            border: 1px solid #FFE5E5;
+            margin-left: 8px;
+        }
+        .btn-edit:hover {
+            background: #E85A71;
+            color: white;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #636E72;
+        }
+        .empty-state i {
+            font-size: 3rem;
+            color: #FFE5E5;
+            margin-bottom: 1rem;
+        }
+        .empty-state p {
+            font-size: 1.1rem;
+        }
+        @media (max-width: 768px) {
+            .page-wrapper {
+                padding: 20px;
+            }
+            .users-card {
+                padding: 1rem;
+                overflow-x: auto;
+            }
+            .users-header h1 {
+                font-size: 1.75rem;
+            }
+            .users-table {
+                font-size: 0.9rem;
+            }
+            .users-table thead th,
+            .users-table tbody td {
+                padding: 10px 12px;
+            }
+            .btn-edit {
+                margin-left: 4px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="users-container">
+        <div class="users-header">
+            <h1>👥 Users</h1>
+            <p>Manage system users</p>
+        </div>
+        
+        <div style="text-align: center;">
+            <a href="{{ path('app_user_new') }}" class="create-btn">
+                <i class="fas fa-plus"></i> Create User
+            </a>
+        </div>
+        
+        <div class="users-card">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Roles</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users|default([]) %}
+                        <tr>
+                            <td><strong>{{ user.username }}</strong></td>
+                            <td>
+                                {% for role in user.roles %}
+                                    <span class="role-badge {% if role == 'ROLE_ADMIN' %}role-admin{% endif %}">
+                                        {{ role|replace({'ROLE_': ''}) }}
+                                    </span>
+                                {% endfor %}
+                            </td>
+                            <td>{{ user.createdAt|date('Y-m-d')|default('—') }}</td>
+                            <td>
+                                <a href="{{ path('app_user_show', {id: user.id}) }}" class="btn-view">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                <a href="{{ path('app_user_edit', {id: user.id}) }}" class="btn-edit">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">
+                                    <i class="fas fa-users-slash"></i>
+                                    <p>No users yet.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

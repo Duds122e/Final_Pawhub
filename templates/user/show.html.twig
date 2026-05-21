@@ -1,0 +1,181 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ user.username }} — PAWHUB{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .page-wrapper {
+            padding: 40px;
+            background: linear-gradient(135deg, #FFF8F3 0%, #FFEEE5 50%, #FFE8E8 100%);
+            min-height: calc(100vh - 80px);
+        }
+        .user-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .user-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .user-header h1 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            color: #2D3436;
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .user-header p {
+            color: #636E72;
+            font-size: 1rem;
+        }
+        .user-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem 2.5rem;
+            box-shadow: 0 10px 40px rgba(232, 90, 113, 0.08);
+        }
+        .user-info-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+        .info-item {
+            padding: 1rem;
+            background: #FFF8F3;
+            border-radius: 12px;
+            border: 2px solid #FFE5E5;
+        }
+        .info-label {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 0.9rem;
+            color: #E85A71;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .info-value {
+            font-size: 1.1rem;
+            color: #2D3436;
+            font-weight: 600;
+        }
+        .form-actions {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #FFE5E5;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #E85A71 0%, #FF8C42 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(232, 90, 113, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(232, 90, 113, 0.4);
+        }
+        .btn-danger {
+            background: white;
+            color: #E85A71;
+            border: 2px solid #E85A71;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-danger:hover {
+            background: #E85A71;
+            color: white;
+        }
+        .btn-secondary {
+            background: white;
+            color: #636E72;
+            border: 2px solid #636E72;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-secondary:hover {
+            background: #636E72;
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .page-wrapper {
+                padding: 20px;
+            }
+            .user-card {
+                padding: 1.5rem;
+            }
+            .user-header h1 {
+                font-size: 1.75rem;
+            }
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="user-container">
+        <div class="user-header">
+            <h1>👤 {{ user.username }}</h1>
+            <p>User Details</p>
+        </div>
+        <div class="user-card">
+            <div class="user-info-grid">
+                <div class="info-item">
+                    <div class="info-label">Username</div>
+                    <div class="info-value">{{ user.username }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Roles</div>
+                    <div class="info-value">{{ user.roles|join(', ') }}</div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <a href="{{ path('app_user') }}" class="btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Back to list
+                </a>
+                <a href="{{ path('app_user_edit', {id: user.id}) }}" class="btn-primary">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <form method="post" action="{{ path('app_user_delete', {id: user.id}) }}" style="display:inline-block;" onsubmit="return confirm('Delete this user?')">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ user.id) }}">
+                    <button type="submit" class="btn-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

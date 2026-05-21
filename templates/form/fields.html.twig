@@ -1,0 +1,16 @@
+{# Hide all help text and tooltip icons #}
+{% use 'form_div_layout.html.twig' %}
+
+{% block form_help -%}
+    {# Intentionally left empty to prevent help text from showing #}
+{%- endblock %}
+
+{% block form_label -%}
+    {{ parent() }}
+    {# No tooltip icon added here #}
+{%- endblock %}
+
+{% block form_widget_simple -%}
+    {{ parent() }}
+    {# No tooltip icon added here #}
+{%- endblock %}

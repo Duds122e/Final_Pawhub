@@ -1,0 +1,157 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Appointments — PAWHUB{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .page-wrapper {
+            padding: 40px;
+            background: linear-gradient(135deg, #FFF8F3 0%, #FFEEE5 50%, #FFE8E8 100%);
+            min-height: calc(100vh - 80px);
+        }
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .page-header h2 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 2rem;
+            color: #2D3436;
+            margin: 0;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #E85A71 0%, #FF8C42 100%);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(232, 90, 113, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(232, 90, 113, 0.4);
+        }
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            border-radius: 15px;
+        }
+        .btn-info {
+            background: #E3F2FD;
+            color: #2196F3;
+        }
+        .btn-warning {
+            background: #FFF3E0;
+            color: #FF8C42;
+        }
+        .btn-danger {
+            background: #FFEBEE;
+            color: #E85A71;
+        }
+        .table-card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(232, 90, 113, 0.08);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            text-align: left;
+            border-bottom: 2px solid #FFE5E5;
+        }
+        thead th {
+            padding: 15px 12px;
+            color: #E85A71;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        tbody tr {
+            border-bottom: 1px solid #f1f1f1;
+            transition: background 0.2s ease;
+        }
+        tbody tr:hover {
+            background: #FFF8F3;
+        }
+        tbody td {
+            padding: 15px 12px;
+            color: #2D3436;
+        }
+        .empty-state {
+            padding: 40px;
+            text-align: center;
+            color: #636E72;
+            font-size: 1rem;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="page-container">
+        <div class="page-header">
+            <h2>📅 Appointments</h2>
+            <a href="{{ path('appointment_new') }}" class="btn-primary">
+                <i class="fas fa-plus"></i> New Appointment
+            </a>
+        </div>
+
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Date & Time</th>
+                        <th>User</th>
+                        <th>Pet</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appointment in appointments %}
+                        <tr>
+                            <td>#{{ appointment.id }}</td>
+                            <td>{{ appointment.dateTime|date('Y-m-d H:i') }}</td>
+                            <td>{{ appointment.user.username }}</td>
+                            <td>{{ appointment.pet.name }}</td>
+                            <td>
+                                <a href="{{ path('appointment_show', {'id': appointment.id}) }}" class="btn-primary btn-sm btn-info" style="margin-right: 5px;">View</a>
+                                <a href="{{ path('appointment_edit', {'id': appointment.id}) }}" class="btn-primary btn-sm btn-warning" style="margin-right: 5px;">Edit</a>
+                                <form method="post" action="{{ path('appointment_delete', {'id': appointment.id}) }}" style="display:inline-block" onsubmit="return confirm('Are you sure?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ appointment.id) }}">
+                                    <button class="btn-primary btn-sm btn-danger" style="border: none;">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="empty-state">No appointments found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

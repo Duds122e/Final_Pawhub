@@ -1,0 +1,149 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Services — PAWHUB{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .page-wrapper {
+            padding: 40px;
+            background: linear-gradient(135deg, #FFF8F3 0%, #FFEEE5 50%, #FFE8E8 100%);
+            min-height: calc(100vh - 80px);
+        }
+        .page-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .page-header h2 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 2rem;
+            color: #2D3436;
+            margin: 0;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #E85A71 0%, #FF8C42 100%);
+            color: white;
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(232, 90, 113, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(232, 90, 113, 0.4);
+        }
+        .table-card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(232, 90, 113, 0.08);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            text-align: left;
+            border-bottom: 2px solid #FFE5E5;
+        }
+        thead th {
+            padding: 15px 12px;
+            color: #E85A71;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        tbody tr {
+            border-bottom: 1px solid #f1f1f1;
+            transition: background 0.2s ease;
+        }
+        tbody tr:hover {
+            background: #FFF8F3;
+        }
+        tbody td {
+            padding: 15px 12px;
+            color: #2D3436;
+        }
+        .actions a {
+            color: #E85A71;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .actions a:hover {
+            color: #FF8C42;
+        }
+        .empty-state {
+            padding: 40px;
+            text-align: center;
+            color: #636E72;
+            font-size: 1rem;
+        }
+        .price-tag {
+            color: #E85A71;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="page-container">
+        <div class="page-header">
+            <h2>🛁 Services</h2>
+            <a class="btn-primary" href="{{ path('app_service_new') }}">
+                <i class="fas fa-plus"></i> Add Service
+            </a>
+        </div>
+
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th style="text-align:right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for svc in service_list|default([]) %}
+                        <tr>
+                            <td>{{ svc.name }}</td>
+                            <td>{{ svc.description }}</td>
+                            <td class="price-tag">₱{{ svc.price }}</td>
+                            <td style="text-align:right" class="actions">
+                                <a href="{{ path('app_service_show', {id: svc.id}) }}">View</a> · 
+                                <a href="{{ path('app_service_edit', {id: svc.id}) }}">Edit</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="empty-state">No services defined.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,226 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Log in - PAWHUB{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(120deg, #9BABAB 0%, #CCD0CF 100%);
+        }
+        .login-container {
+            display: flex;
+            min-height: 100vh;
+            background: none;
+        }
+        .login-left {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: #CCD0CF;
+            border-radius: 2rem;
+            margin: 2rem;
+        }
+        .login-form {
+            width: 100%;
+            max-width: 400px;
+        }
+        .login-logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .login-logo img {
+            max-height: 80px;
+            width: auto;
+            margin-bottom: 1rem;
+        }
+        .login-title {
+            font-size: 2.2rem;
+            font-family: 'Baloo 2', cursive, sans-serif;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            color: #253745;
+            text-align: center;
+        }
+        .form-control {
+            height: 50px;
+            border-radius: 1.2rem;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            margin-bottom: 1.25rem;
+            width: 100%;
+            background: #CCD0CF;
+        }
+        .form-control:focus {
+            border: none;
+            box-shadow: none;
+        }
+        .btn-login {
+            width: 100%;
+            height: 50px;
+            border-radius: 1.2rem;
+            font-weight: 800;
+            font-size: 1.1rem;
+            background-color: #253745;
+            color: #CCD0CF;
+            border: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-family: 'Baloo 2', cursive, sans-serif;
+            box-shadow: 0 2px 8px #4A5C6A;
+        }
+        .btn-login:hover {
+            background-color: #4A5C6A;
+            color: #CCD0CF;
+            transform: scale(1.03);
+        }
+        .btn-google {
+            width: 100%;
+            height: 50px;
+            border-radius: 1.2rem;
+            font-weight: 800;
+            font-size: 1.05rem;
+            background: #fff;
+            color: #253745;
+            border: 2px solid #4A5C6A;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(74, 92, 106, 0.25);
+        }
+        .btn-google:hover {
+            transform: scale(1.02);
+            border-color: #253745;
+        }
+        .btn-google img {
+            width: 18px;
+            height: 18px;
+        }
+        .login-divider {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin: 0.25rem 0 1.25rem 0;
+            color: #4A5C6A;
+            font-weight: 700;
+        }
+        .login-divider::before,
+        .login-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: rgba(74, 92, 106, 0.6);
+        }
+        .signup-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #4A5C6A;
+            font-size: 1rem;
+        }
+        .signup-link a {
+            color: #253745;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 992px) {
+            .login-right {
+                display: none;
+            }
+            .login-left {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+        }
+        .login-right {
+            flex: 1;
+            background: linear-gradient(135deg, #9BABAB 0%, #253745 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #CCD0CF;
+            border-radius: 2rem;
+            margin: 2rem;
+        }
+        .login-right .pet-illustration {
+            width: 220px;
+            height: auto;
+            margin: 2rem auto 1.5rem auto;
+            display: block;
+            border-radius: 1.5rem;
+            box-shadow: 0 2px 12px rgba(37, 55, 69, 0.27);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="login-container">
+    <div class="login-left">
+        <div class="login-form">
+            <div class="login-logo">
+                <img src="{{ asset('images/logo/logo-charity.png') }}" alt="PAWHUB" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgNTAiPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iNTAiIGZpbGw9IiM3QjRBRTIiLz48cGF0aCBkPSJNNDAgMTVjMC01LjUyMyA0LjQ3Ny0xMCAxMC0xMHMxMCA0LjQ3NyAxMCAxMHYyMGMwIDUuNTIzLTQuNDc3IDEwLTEwIDEwcy0xMC00LjQ3Ny0xMC0xMHYtMjB6IiBmaWxsPSIjRkZGRkZGIi8+PHBhdGggZD0iTTE0MCAxNWMwLTUuNTIzIDQuNDc3LTEwIDEwLTEwczEwIDQuNDc3IDEwIDEwdjIwYzAgNS41MjMtNC40NzcgMTAtMTAgMTBzLTEwLTQuNDc3LTEwLTEwdi0yMHoiIGZpbGw9IiNGRkZGRkYiLz48cGF0aCBkPSJNNzAgMTVjMC01LjUyMyA0LjQ3Ny0xMCAxMC0xMHMxMCA0LjQ3NyAxMCAxMHYyMGMwIDUuNTIzLTQuNDc3IDEwLTEwIDEwcy0xMC00LjQ3Ny0xMC0xMHYtMjB6IiBmaWxsPSIjRkZGRkZGIi8+PC9zdmc+'; this.alt='PAWHUB Logo'">
+            </div>
+            <h1 class="login-title">Welcome Back</h1>
+            
+            {% if error %}
+                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+            
+            <a class="btn-google" href="{{ path('connect_google_start') }}">
+                <img src="{{ asset('images/logo/google.jpg') }}" alt="Google">
+                Continue with Google
+            </a>
+
+            <div class="login-divider">
+                <span>or</span>
+            </div>
+            
+            <form method="post">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="username" placeholder="Username or Email" required autofocus autocomplete="username">
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" class="form-control" name="password" placeholder="Password" required>
+                </div>
+                
+                {# <div class="forgot-password">
+                    <a href="#">Forgot password?</a>
+                </div> #}
+                
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                
+                <button type="submit" class="btn-login">
+                    Sign In
+                </button>
+                
+                <div class="signup-link">
+                    Don't have an account? <a href="{{ path('app_register') }}">Sign up</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="login-right">
+        <div class="text-center">
+            <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 1rem; font-family: 'Baloo 2', cursive; color: #fff; letter-spacing: 1px;">PAWHUB</h2>
+            <p style="max-width: 400px; line-height: 1.6; font-size: 1.1rem; opacity: 0.95; color: #fff; font-weight: 500;">
+                Join our community of pet lovers and give your furry friends the care they deserve.
+            </p>
+            <img src="{{ asset('images/pets/dogg.jpg') }}" alt="Pet Login" class="pet-illustration" />
+        </div>
+    </div>
+</div>
+{% endblock %}

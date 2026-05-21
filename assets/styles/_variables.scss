@@ -1,0 +1,45 @@
+// Color Palette
+:root {
+  // Primary Colors
+  --color-primary: #FF7A50;    // Orange
+  --color-secondary: #7B4AE2;  // Purple
+  --color-accent: #4AE2A5;     // Mint Green
+  --color-highlight: #FFE8B8;  // Light Yellow
+  --color-pink: #FF7A9D;       // Pink Accent
+  
+  // Neutral Colors
+  --color-white: #FFFFFF;
+  --color-light-gray: #F5F5F5;
+  --color-dark: #2D2D2D;
+  
+  // Background Colors
+  --bg-hero: var(--color-primary);
+  --bg-about: var(--color-secondary);
+  --bg-products: var(--color-accent);
+  --bg-contact: var(--color-highlight);
+  
+  // Text Colors
+  --text-primary: var(--color-dark);
+  --text-on-dark: var(--color-white);
+  --text-on-accent: var(--color-dark);
+  
+  // UI Elements
+  --border-radius: 12px;
+  --border-radius-lg: 16px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+}
+
+// Utility Classes
+.bg-primary { background-color: var(--color-primary); }
+.bg-secondary { background-color: var(--color-secondary); }
+.bg-accent { background-color: var(--color-accent); }
+.bg-highlight { background-color: var(--color-highlight); }
+
+.text-white { color: var(--color-white); }
+.text-dark { color: var(--color-dark); }
+
+.rounded { border-radius: var(--border-radius); }
+.rounded-lg { border-radius: var(--border-radius-lg); }
+
+.shadow { box-shadow: var(--box-shadow); }

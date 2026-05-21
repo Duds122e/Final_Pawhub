@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<h1>Dashboard</h1>
+
+<div class="kpi-container">
+    <div class="kpi">Total Pets: {{ pets }}</div>
+    <div class="kpi">Pending Adoptions: {{ pending }}</div>
+    <div class="kpi">Upcoming Appointments: {{ appointments }}</div>
+    <div class="kpi">Active Services: {{ services }}</div>
+</div>
+
+<div class="charts">
+    <canvas id="adoptionChart"></canvas>
+    <canvas id="serviceChart"></canvas>
+</div>
+
+{% endblock %}

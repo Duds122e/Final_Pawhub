@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}PAWHUB{% endblock %}</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ asset('images/logo/logo-charity.png') }}">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+        <!-- Global Styles -->
+        <link rel="stylesheet" href="{{ asset('css/global.css') }}">
+        
+        <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+        <style>
+            :root {
+                --primary: #253745;
+                --primary-dark: #4A5C6A;
+                --secondary: #9BABAB;
+                --secondary-dark: #CCD0CF;
+                --danger: #f43f5e;
+                --warning: #F59E0B;
+                --success: #10B981;
+            }
+
+            body {
+                background: linear-gradient(135deg, #CCD0CF 0%, #9BABAB 100%);
+                color: #11212D;
+                font-family: 'Baloo 2', 'Comic Sans MS', 'Segoe UI', system-ui, -apple-system, sans-serif;
+                line-height: 1.7;
+            }
+
+            h1, h2, h3, h4, h5, h6 {
+                font-family: 'Baloo 2', cursive, sans-serif;
+                color: #253745;
+                font-weight: 800;
+                letter-spacing: 1px;
+            }
+
+            .card, .adoption-form, .form-group, .pet-option, .system-log-table, .table, .dashboard-card {
+                background: #CCD0CF;
+                border-radius: 2rem;
+                box-shadow: 0 8px 32px rgba(37, 55, 69, 0.08), 0 1.5px 6px #4A5C6A;
+                border: 2px solid #9BABAB;
+            }
+
+            .btn, .btn-primary, button, input[type="submit"] {
+                background-color: #253745;
+                color: #CCD0CF;
+                border: none;
+                border-radius: 1.5rem;
+                font-family: 'Baloo 2', cursive, sans-serif;
+                font-weight: 700;
+                font-size: 1.1rem;
+                padding: 0.7rem 2rem;
+                transition: background 0.2s, box-shadow 0.2s;
+                box-shadow: 0 2px 8px #4A5C6A;
+            }
+            .btn:hover, .btn-primary:hover, button:hover, input[type="submit"]:hover {
+                background-color: #4A5C6A;
+                color: #253745;
+            }
+
+            .form-control, select, input, textarea {
+                border-radius: 1.2rem;
+                border: 2px solid #4A5C6A;
+                padding: 0.8rem 1.2rem;
+                font-size: 1rem;
+                background: #CCD0CF;
+                color: #11212D;
+                font-family: inherit;
+                margin-bottom: 0.5rem;
+            }
+            .form-control:focus, select:focus, input:focus, textarea:focus {
+                outline: none;
+                border-color: #253745;
+                background: #CCD0CF;
+            }
+
+            /* Paw print background accent (optional) */
+            body::before {
+                content: '';
+                position: fixed;
+                top: 0; left: 0; width: 100vw; height: 100vh;
+                background: url('https://cdn.pixabay.com/photo/2013/07/12/13/58/paw-147409_1280.png') repeat 0 0/200px auto;
+                opacity: 0.04;
+                z-index: 0;
+                pointer-events: none;
+            }
+
+            /* Table styling for logs, lists, etc. */
+            table {
+                background: #CCD0CF;
+                border-radius: 1.2rem;
+                box-shadow: 0 2px 8px #4A5C6A;
+                border: 2px solid #9BABAB;
+                overflow: hidden;
+            }
+            th {
+                background: #253745;
+                color: #CCD0CF;
+                font-family: 'Baloo 2', cursive, sans-serif;
+                font-size: 1.1rem;
+                font-weight: 700;
+            }
+            td {
+                color: #11212D;
+                font-size: 1rem;
+            }
+
+            /* Responsive adjustments */
+            @media (max-width: 768px) {
+                .adoption-container, .card, .adoption-form, .dashboard-card {
+                    padding: 1rem;
+                }
+                h1 {
+                    font-size: 2rem;
+                }
+            }
+            .main-container {
+                display: flex;
+                min-height: 100vh;
+            }
+            
+            .main-content {
+                flex: 1;
+                padding: 2rem;
+                margin-left: 250px; /* Adjust based on sidebar width */
+                transition: all 0.3s ease;
+            }
+            
+            @media (max-width: 1024px) {
+                .main-content {
+                    margin-left: 0;
+                    padding: 1rem;
+                }
+            }
+            
+            /* Auth Pages */
+            .auth-container {
+                display: flex;
+                min-height: 100vh;
+                align-items: center;
+                justify-content: center;
+                background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+                padding: 2rem;
+            }
+            
+            .auth-card {
+                background: white;
+                border-radius: 1rem;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                padding: 2.5rem;
+                width: 100%;
+                max-width: 450px;
+                margin: 0 auto;
+            }
+            
+            /* Hide any remaining tooltip icons */
+            .form-text,
+            .form-help,
+            .help-text,
+            .form-help-icon,
+            .help-icon,
+            .fa-question-circle,
+            .bi-question-circle,
+            .form-text:after,
+            .form-text:before,
+            .form-group:after,
+            .form-group:before {
+                display: none !important;
+                content: none !important;
+            }
+            
+            .auth-title {
+                color: #06141B;
+                text-align: center;
+                margin-bottom: 2rem;
+                font-weight: 700;
+                font-size: 1.75rem;
+            }
+            
+            .form-control {
+                border-radius: 10px;
+                padding: 0.75rem 1rem;
+                border: 2px solid #4A5C6A;
+                transition: all 0.3s ease;
+            }
+            
+            .form-control:focus {
+                border-color: #253745;
+                box-shadow: 0 0 0 0.2rem rgba(37, 55, 69, 0.1);
+            }
+            
+            .btn-primary {
+                background-color: #253745;
+                border: none;
+                padding: 0.75rem 1.5rem;
+                font-weight: 600;
+                border-radius: 10px;
+                transition: all 0.3s ease;
+                width: 100%;
+            }
+            
+            .btn-primary:hover {
+                background-color: #4A5C6A;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(37, 55, 69, 0.2);
+            }
+            
+            .btn-outline-primary {
+                border: 2px solid #253745;
+                color: #253745;
+                background: transparent;
+                padding: 0.75rem 1.5rem;
+                font-weight: 600;
+                border-radius: 10px;
+                transition: all 0.3s ease;
+                width: 100%;
+            }
+            
+            .btn-outline-primary:hover {
+                background-color: #253745;
+                color: #CCD0CF;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(37, 55, 69, 0.2);
+            }
+            
+            .auth-footer {
+                text-align: center;
+                margin-top: 1.5rem;
+                color: #4A5C6A;
+            }
+            
+            .auth-footer a {
+                color: #253745;
+                font-weight: 500;
+                text-decoration: none;
+            }
+            
+            .auth-footer a:hover {
+                text-decoration: underline;
+            }
+            
+            /* Error messages */
+            .alert {
+                border-radius: 10px;
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+                border: none;
+            }
+            
+            .alert-danger {
+                background-color: #fde8e8;
+                color: #c53030;
+            }
+        </style>
+    {% endblock %}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR STYLES */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #06141B 0%, #11212D 100%);
+            padding: 20px 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar .logo {
+            color: #CCD0CF;
+            text-align: center;
+            padding: 20px 15px;
+            font-size: 24px;
+            font-weight: 700;
+            border-bottom: 2px solid rgba(154, 186, 171, 0.1);
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin: 0;
+        }
+
+        .sidebar a {
+            display: block;
+            color: rgba(154, 186, 171, 0.8);
+            text-decoration: none;
+            padding: 12px 20px;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .sidebar a:hover {
+            background: rgba(154, 186, 171, 0.1);
+            color: #CCD0CF;
+            border-left-color: #4A5C6A;
+            padding-left: 25px;
+        }
+
+        .sidebar a.active {
+            background: rgba(74, 92, 106, 0.2);
+            color: #4A5C6A;
+            border-left-color: #4A5C6A;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* TOP NAVBAR */
+        .top-nav {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .top-nav .search {
+            width: 300px;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .top-nav .search:focus {
+            outline: none;
+            border-color: #4A5C6A;
+            box-shadow: 0 0 0 3px rgba(74, 92, 106, 0.1);
+        }
+
+        .top-nav .search::placeholder {
+            color: #9BABAB;
+        }
+
+        .top-nav .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #06141B;
+            font-weight: 600;
+            padding: 8px 16px;
+            background: #CCD0CF;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .top-nav .profile:hover {
+            background: #9BABAB;
+        }
+
+        /* SCROLLBAR STYLING */
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: rgba(154, 186, 171, 0.05);
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: rgba(154, 186, 171, 0.2);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(154, 186, 171, 0.3);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+            }
+
+            .top-nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .top-nav .search {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .top-nav {
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+{% set currentRoute = app.request.attributes.get('_route') %}
+{% set isAuthPage = currentRoute in ['app_login', 'app_register'] %}
+{% set isLandingPage = is_landing_page is defined and is_landing_page %}
+
+{% set isDashboard = currentRoute == 'app_dashboard' %}
+
+<div class="admin-container" {% if not app.user %}style="margin-left: 0;"{% endif %}>
+    {% if app.user %}
+    <aside class="sidebar">
+        <h2 class="logo">PAWHUB</h2>
+        <ul>
+            <li><a href="{{ path('app_dashboard') }}">Dashboard</a></li>
+            <li><a href="{{ path('app_pet') }}">Pet Profiles</a></li>
+            <li><a href="{{ path('app_adoption') }}">Adoption Requests</a></li>
+            <li><a href="{{ path('appointment_index') }}">Appointments</a></li>
+            <li><a href="{{ path('app_service') }}">Services</a></li>
+            {% if is_granted('ROLE_ADMIN') %}
+                <li><a href="{{ path('app_user') }}">Users</a></li>
+                <li><a href="{{ path('app_log') }}">System Logs</a></li>
+            {% endif %}
+        </ul>
+    </aside>
+    {% endif %}
+
+    <main class="main-content" {% if not app.user %}style="margin-left: 0; width: 100%;"{% endif %}>
+        {% if isDashboard %}
+        <nav class="top-nav">
+            <div class="profile" style="margin-left: auto;">
+                {% if app.user %}
+                    {{ app.user.username }}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <span style="font-size: 12px; color: #4A5C6A; margin-left: 10px;">(Admin)</span>
+                    {% else %}
+                        <span style="font-size: 12px; color: #9BABAB; margin-left: 10px;">(Staff)</span>
+                    {% endif %}
+                    |
+                    <form method="post" action="{{ path('app_logout') }}" style="display: inline; margin-left: 10px;">
+                        <button type="submit" style="background: none; border: none; color: #253745; cursor: pointer; padding: 0; font: inherit;">
+                            Logout
+                        </button>
+                    </form>
+                {% else %}
+                    <a href="{{ path('app_login') }}" style="color: #4A5C6A; text-decoration: none;">Login</a>
+                {% endif %}
+            </div>
+        </nav>
+        {% endif %}
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label }}" role="alert" style="margin: 1rem 0;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+        {% block body %}{% endblock %}
+    </main>
+
+</div>
+</body>
+</html>

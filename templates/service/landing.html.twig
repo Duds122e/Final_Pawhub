@@ -1,0 +1,293 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Our Services — PAWHUB{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Nunito', sans-serif;
+            min-height: 100vh;
+        }
+        
+        body {
+            background: linear-gradient(180deg, #FFEEE5 0%, #FFF8F3 100%);
+        }
+
+        /* Top Navigation */
+        .landing-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 3rem;
+            background: rgba(255, 238, 229, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        
+        .landing-nav .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .landing-nav .logo img {
+            height: 45px;
+            width: auto;
+        }
+        
+        .landing-nav .logo span {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: #2D3436;
+        }
+        
+        .landing-nav .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+        
+        .landing-nav .nav-links a {
+            color: #636E72;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+        
+        .landing-nav .nav-links a:hover {
+            color: #FF8C42;
+        }
+        
+        .landing-nav .contact-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #FF6B9D;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        .landing-nav .contact-info i {
+            color: #FF8C42;
+            font-size: 1.1rem;
+        }
+
+        /* Services Section */
+        .services-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 7rem 4rem 5rem 4rem;
+            box-sizing: border-box;
+        }
+
+        .services-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .services-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .services-tagline {
+            color: #FF8C42;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .services-tagline::before,
+        .services-tagline::after {
+            content: '';
+            width: 30px;
+            height: 2px;
+            background: #FF8C42;
+        }
+
+        .services-title {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2D3436;
+        }
+
+        .services-title span {
+            color: #FF6B9D;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(255, 140, 66, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(255, 140, 66, 0.2);
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #FF8C42 0%, #FF6B9D 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .service-card h3 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1.4rem;
+            color: #2D3436;
+            margin-bottom: 1rem;
+        }
+
+        .service-card p {
+            color: #636E72;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1024px) {
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .services-section {
+                padding: 7rem 1.5rem 3rem 1.5rem;
+            }
+
+            .services-title {
+                font-size: 2rem;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .landing-nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .landing-nav .nav-links {
+                display: none;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Top Navigation -->
+    <nav class="landing-nav">
+        <div class="logo">
+            <img src="{{ asset('images/logo/logo-charity.png') }}" alt="PAWHUB Logo">
+            <span>PAWHUB</span>
+        </div>
+        <div class="nav-links">
+            <a href="{{ path('app_home') }}">Homepage</a>
+            <a href="{{ path('app_about') }}">About Us</a>
+            <a href="{{ path('app_service') }}">Services</a>
+            <a href="{{ path('app_contact') }}">Contact Us</a>
+        </div>
+        <div class="contact-info">
+            <i class="fas fa-phone-alt"></i>
+            <span>09479822291</span>
+        </div>
+    </nav>
+
+    <!-- Services Section -->
+    <section class="services-section">
+        <div class="services-container">
+            <div class="services-header">
+                <div class="services-tagline">What We Offer</div>
+                <h1 class="services-title">
+                    Our <span>Services</span>
+                </h1>
+            </div>
+            
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3>Pet Adoption</h3>
+                    <p>Find your perfect companion through our safe and secure adoption process. We help match you with pets that fit your lifestyle.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-stethoscope"></i>
+                    </div>
+                    <h3>Veterinary Care</h3>
+                    <p>Professional veterinary services to keep your furry friends healthy and happy. Book appointments with ease.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-cut"></i>
+                    </div>
+                    <h3>Grooming</h3>
+                    <p>Keep your pets looking their best with our professional grooming services. Baths, haircuts, and nail trims.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-hotel"></i>
+                    </div>
+                    <h3>Pet Boarding</h3>
+                    <p>Safe and comfortable boarding facilities for when you need to be away. Your pets will feel right at home.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Training</h3>
+                    <p>Expert training programs to help your pets learn good behavior and fun tricks. Positive reinforcement methods.</p>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-shopping-bag"></i>
+                    </div>
+                    <h3>Pet Shop</h3>
+                    <p>Quality pet food, toys, accessories, and supplies. Everything your pet needs under one roof.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

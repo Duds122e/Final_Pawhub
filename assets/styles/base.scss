@@ -1,0 +1,147 @@
+@import 'variables';
+
+/* Base Styles */
+body {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.2;
+  margin: 0 0 1rem 0;
+}
+
+a {
+  color: var(--color-secondary);
+  text-decoration: none;
+  transition: var(--transition);
+  
+  &:hover {
+    color: var(--color-primary);
+  }
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  transition: var(--transition);
+  
+  &-primary {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    
+    &:hover {
+      background-color: darken(#FF7A50, 10%);
+      transform: translateY(-2px);
+    }
+  }
+  
+  &-secondary {
+    background-color: var(--color-secondary);
+    color: var(--color-white);
+    
+    &:hover {
+      background-color: darken(#7B4AE2, 10%);
+      transform: translateY(-2px);
+    }
+  }
+}
+
+/* Cards */
+.card {
+  background: var(--color-white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 1.5rem;
+  transition: var(--transition);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* Sections */
+section {
+  padding: 4rem 1rem;
+  
+  .section-title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    text-align: center;
+    position: relative;
+    
+    &::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 4px;
+      background: var(--color-pink);
+      margin: 1rem auto 0;
+      border-radius: 2px;
+    }
+  }
+}
+
+/* Hero Section */
+.hero {
+  background-color: var(--bg-hero);
+  color: var(--color-white);
+  padding: 6rem 1rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    background: url('../images/hero-pattern.svg') no-repeat right center;
+    opacity: 0.1;
+  }
+  
+  h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+    
+    &::after {
+      content: '🐾';
+      position: absolute;
+      right: -40px;
+      top: -20px;
+      font-size: 2rem;
+    }
+  }
+  
+  p {
+    font-size: 1.25rem;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+  
+  section {
+    padding: 3rem 1rem;
+  }
+}

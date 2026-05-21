@@ -1,0 +1,165 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Adoption Request — PAWHUB{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .page-wrapper {
+            padding: 40px;
+            background: linear-gradient(135deg, #FFF8F3 0%, #FFEEE5 50%, #FFE8E8 100%);
+            min-height: calc(100vh - 80px);
+        }
+        .adoption-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .adoption-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .adoption-header h1 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            color: #2D3436;
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .adoption-header p {
+            color: #636E72;
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .adoption-form {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem 2.5rem;
+            box-shadow: 0 10px 40px rgba(232, 90, 113, 0.08);
+        }
+        fieldset {
+            border: 2px solid #FFE5E5;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            background: #FFF8F3;
+        }
+        fieldset legend {
+            background: white;
+            padding: 0.5rem 1rem;
+            border: 2px solid #FFE5E5;
+            border-radius: 12px;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #E85A71;
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #636E72;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #FFE5E5;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background: white;
+            font-family: 'Inter', sans-serif;
+        }
+        .form-control:focus {
+            border-color: #E85A71;
+            box-shadow: 0 0 0 3px rgba(232, 90, 113, 0.1);
+            outline: none;
+        }
+        .form-actions {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #FFE5E5;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #E85A71 0%, #FF8C42 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(232, 90, 113, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(232, 90, 113, 0.4);
+        }
+        @media (max-width: 768px) {
+            .page-wrapper {
+                padding: 20px;
+            }
+            .adoption-form {
+                padding: 1.5rem;
+            }
+            .adoption-header h1 {
+                font-size: 1.75rem;
+            }
+            fieldset {
+                padding: 1rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="adoption-container">
+        <div class="adoption-header">
+            <h1>✏️ Edit Adoption Request</h1>
+            <p>Update the adoption request details below.</p>
+        </div>
+        <div class="adoption-form">
+            {{ form_start(form) }}
+                {{ form_row(form.status, {'attr': {'class': 'form-control'}}) }}
+                <fieldset>
+                    <legend>Home and Household Details</legend>
+                    {{ form_row(form.residenceType, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_row(form.householdMembers, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_row(form.homeAgreement, {'attr': {'class': 'form-control'}}) }}
+                </fieldset>
+                <fieldset>
+                    <legend>Pet History and Experience</legend>
+                    {{ form_row(form.currentPets, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_row(form.previousPets, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_row(form.spayNeuter, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_row(form.petExperience, {'attr': {'class': 'form-control'}}) }}
+                </fieldset>
+                <fieldset>
+                    <legend>Pet Care and Commitment</legend>
+                    {{ form_row(form.dailySchedule, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_row(form.financials, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_row(form.contingencyPlan, {'attr': {'class': 'form-control'}}) }}
+                </fieldset>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Update Request
+                    </button>
+                </div>
+            {{ form_end(form, {'render_rest': false}) }}
+        </div>
+    </div>
+</div>
+{% endblock %}

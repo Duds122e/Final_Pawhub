@@ -1,0 +1,134 @@
+/* Main Colors */
+:root {
+    --primary-orange: #FF7A50;
+    --primary-purple: #7B4AE2;
+    --mint-green: #4AE2A5;
+    --light-yellow: #FFE8B8;
+    --white: #FFFFFF;
+    --dark-gray: #2D2D2D;
+    --light-gray: #F5F5F5;
+    --pink-accent: #FF7A9D;
+}
+
+/* Global Styles */
+body {
+    background-color: var(--light-gray);
+    color: var(--dark-gray);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Login Card */
+.login-card {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Form Elements */
+.form-control, .form-control-lg {
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-control-lg:focus {
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 0.25rem rgba(123, 74, 226, 0.1);
+}
+
+/* Buttons */
+.btn-primary {
+    background-color: var(--primary-purple);
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: #6a3dc8;
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+    color: var(--primary-purple);
+    border: 2px solid var(--primary-purple);
+    border-radius: 12px;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover, .btn-outline-primary:focus {
+    background-color: rgba(123, 74, 226, 0.1);
+    color: var(--primary-purple);
+    transform: translateY(-1px);
+}
+
+/* Card Styling */
+.card {
+    border: none;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--white);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+/* Form Labels */
+.form-label {
+    font-weight: 500;
+    color: var(--dark-gray);
+    margin-bottom: 0.5rem;
+}
+
+/* Remember Me Checkbox */
+.form-check-input:checked {
+    background-color: var(--primary-purple);
+    border-color: var(--primary-purple);
+}
+
+.form-check-input:focus {
+    border-color: var(--primary-purple);
+    box-shadow: 0 0 0 0.25rem rgba(123, 74, 226, 0.25);
+}
+
+/* Links */
+a {
+    color: var(--primary-purple);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+a:hover {
+    color: #6a3dc8;
+    text-decoration: underline;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .login-card {
+        margin: 1rem;
+    }
+    
+    .card-body {
+        padding: 2rem !important;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+    animation: fadeIn 0.5s ease-out;
+}

@@ -1,0 +1,157 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ pet.name }} — PAWHUB{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        .page-wrapper {
+            padding: 40px;
+            background: linear-gradient(135deg, #FFF8F3 0%, #FFEEE5 50%, #FFE8E8 100%);
+            min-height: calc(100vh - 80px);
+        }
+        .page-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .page-header h2 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 2rem;
+            color: #2D3436;
+            margin: 0;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #E85A71 0%, #FF8C42 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(232, 90, 113, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(232, 90, 113, 0.4);
+        }
+        .btn-danger {
+            background: #FFEBEE;
+            color: #E85A71;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-danger:hover {
+            background: #E85A71;
+            color: white;
+        }
+        .detail-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(232, 90, 113, 0.08);
+        }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .detail-item {
+            padding: 15px;
+            background: #FFF8F3;
+            border-radius: 12px;
+        }
+        .detail-item dt {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 0.8rem;
+            color: #E85A71;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+        .detail-item dd {
+            font-size: 1.1rem;
+            color: #2D3436;
+            font-weight: 500;
+            margin: 0;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-available { background: #E8F5E9; color: #4CAF50; }
+        .status-adopted { background: #E3F2FD; color: #2196F3; }
+        .status-pending { background: #FFF3E0; color: #FF8C42; }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="page-container">
+        <div class="page-header">
+            <h2>🐾 {{ pet.name }}</h2>
+            <div>
+                <a class="btn-primary" href="{{ path('app_pet_edit', {id: pet.id}) }}">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <form method="post" action="{{ path('app_pet_delete', {id: pet.id}) }}" style="display:inline-block;margin-left:8px;">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ pet.id) }}">
+                    <button type="submit" class="btn-danger" onclick="return confirm('Delete this pet?')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="detail-card">
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <dt>Name</dt>
+                    <dd>{{ pet.name }}</dd>
+                </div>
+                <div class="detail-item">
+                    <dt>Type</dt>
+                    <dd>{{ pet.type }}</dd>
+                </div>
+                <div class="detail-item">
+                    <dt>Breed</dt>
+                    <dd>{{ pet.breed }}</dd>
+                </div>
+                <div class="detail-item">
+                    <dt>Age</dt>
+                    <dd>{{ pet.age }}</dd>
+                </div>
+                <div class="detail-item">
+                    <dt>Status</dt>
+                    <dd>
+                        <span class="status-badge status-{{ pet.status|lower }}">{{ pet.status }}</span>
+                    </dd>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+app_home:
+    path: /
+    controller: App\Controller\HomeController::index
+    methods: [GET]
+
+# This ensures the home page is accessible at both / and /home
+app_home_alt:
+    path: /home
+    controller: App\Controller\HomeController::index
+    methods: [GET]

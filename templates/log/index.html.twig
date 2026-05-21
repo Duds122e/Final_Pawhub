@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}System Logs — PAWHUB{% endblock %}
+
+{% block body %}
+<section style="padding:24px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+        <h2>System Logs</h2>
+        <div class="actions"><a class="button" href="#">Export</a></div>
+    </div>
+
+    <div style="background:white;padding:12px;border-radius:8px;box-shadow:0 4px 8px rgba(0,0,0,0.04);">
+        <table style="width:100%;border-collapse:collapse;">
+            <thead style="text-align:left;border-bottom:1px solid #eee;color:#555;">
+                <tr>
+                    <th style="padding:10px">User ID</th>
+                    <th style="padding:10px">Username</th>
+                    <th style="padding:10px">Role</th>
+                    <th style="padding:10px">Performed By</th>
+                    <th style="padding:10px">Action</th>
+                    <th style="padding:10px">Target Data</th>
+                    <th style="padding:10px">Date &amp; Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs|default([]) %}
+                    <tr style="border-bottom:1px solid #f7f7f7;">
+                        <td style="padding:12px">{{ log.user ? log.user.id : 'system' }}</td>
+                        <td style="padding:12px">{{ log.user ? log.user.username : 'system' }}</td>
+                        <td style="padding:12px">{{ log.user ? (log.user.roles|first) : 'system' }}</td>
+                        <td style="padding:12px">
+                            {% if log.user %}
+                                {% if 'ROLE_ADMIN' in log.user.roles %}Admin{% elseif 'ROLE_STAFF' in log.user.roles %}Staff{% else %}User{% endif %}
+                            {% else %}
+                                System
+                            {% endif %}
+                        </td>
+                        <td style="padding:12px">{{ log.type|default('N/A') }}</td>
+                        <td style="padding:12px">{{ log.message|default('N/A') }}</td>
+                        <td style="padding:12px">{{ log.createdAt ? log.createdAt|date('Y-m-d h:i:s A') : 'n/a' }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="padding:18px;text-align:center;color:#888">No logs to show.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

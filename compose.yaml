@@ -1,0 +1,73 @@
+services:
+  paw_php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: paw_php_container
+    restart: unless-stopped
+    working_dir: /var/www/html
+    environment:
+      APP_ENV: dev
+      APP_SECRET: ${APP_SECRET:-ChangeMeInProduction}
+      DATABASE_URL: mysql://${MYSQL_USER:-paw_user}:${MYSQL_PASSWORD:-paw_password}@paw_mysql:3306/${MYSQL_DATABASE:-paw_db}?serverVersion=8.0
+      MYSQL_USER: ${MYSQL_USER:-paw_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-paw_password}
+      CORS_ALLOW_ORIGIN: ${CORS_ALLOW_ORIGIN:-'^https?://(localhost|127\.0\.0\.1|10\.0\.2\.2)(:[0-9]+)?$'}
+      JWT_PASSPHRASE: ${JWT_PASSPHRASE:-94db63d9efcf0dd29c57ce973406665cdf1a53f6522a69eca6699e9f25bf56e1}
+      CREATE_ADMIN: "1"
+      DB_HOST: paw_mysql
+    volumes:
+      - ./var:/var/www/html/var
+      - ./public/images:/var/www/html/public/images
+    ports:
+      - "8000:8000"
+    networks:
+      - paw_network
+    depends_on:
+      paw_mysql:
+        condition: service_healthy
+
+  paw_mysql:
+    image: mysql:8.0
+    container_name: paw_mysql_container
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-paw_root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-paw_db}
+      MYSQL_USER: ${MYSQL_USER:-paw_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-paw_password}
+    ports:
+      - "3310:3306"
+    volumes:
+      - paw_mysql_data:/var/lib/mysql
+    networks:
+      - paw_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-paw_root}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  paw_phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: paw_phpmyadmin_container
+    restart: unless-stopped
+    environment:
+      PMA_HOST: paw_mysql
+      PMA_USER: ${MYSQL_USER:-paw_user}
+      PMA_PASSWORD: ${MYSQL_PASSWORD:-paw_password}
+    ports:
+      - "8085:80"
+    depends_on:
+      paw_mysql:
+        condition: service_healthy
+    networks:
+      - paw_network
+
+volumes:
+  paw_mysql_data:
+
+networks:
+  paw_network:
+    driver: bridge

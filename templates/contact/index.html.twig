@@ -1,0 +1,571 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contact Us — PAWHUB{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #FFF8F3;
+        }
+
+        /* Navigation */
+        .main-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 4rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .main-nav .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .main-nav .logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .main-nav .logo span {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #2D3436;
+        }
+
+        .main-nav .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .main-nav .nav-links a {
+            color: #636E72;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .main-nav .nav-links a:hover,
+        .main-nav .nav-links a.active {
+            color: #E85A71;
+        }
+
+        .main-nav .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .main-nav .phone-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #E85A71;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .user-icon {
+            width: 35px;
+            height: 35px;
+            background: #FFE5E5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #E85A71;
+        }
+
+        /* Hero Section */
+        .contact-hero {
+            padding-top: 80px;
+            background: linear-gradient(180deg, #FFE8E8 0%, #FFF8F3 100%);
+            text-align: center;
+            padding-bottom: 2rem;
+        }
+
+        .contact-hero h1 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 3rem;
+            color: #2D3436;
+            margin-bottom: 1rem;
+        }
+
+        .contact-hero-image {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .contact-hero-image img {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Info Cards Section */
+        .info-cards-section {
+            padding: 3rem 4rem;
+            background: #FFF8F3;
+        }
+
+        .info-cards-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(232, 90, 113, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .info-card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #E85A71 0%, #FF8C42 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .info-card h3 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1.2rem;
+            color: #2D3436;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-card p {
+            color: #636E72;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Contact Form Section */
+        .contact-form-section {
+            padding: 4rem;
+            background: white;
+        }
+
+        .contact-form-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .contact-form-image img {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .contact-form-content h2 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 2.5rem;
+            color: #2D3436;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid #FFE5E5;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: white;
+            box-shadow: none;
+        }
+
+        .form-control:focus {
+            border-color: #E85A71;
+            outline: none;
+            background: white;
+        }
+
+        textarea.form-control {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn-submit {
+            background: linear-gradient(90deg, #E85A71 0%, #FF8C42 100%);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 30px;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(232, 90, 113, 0.3);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(232, 90, 113, 0.4);
+        }
+
+        /* Newsletter Section */
+        .newsletter-section {
+            background: linear-gradient(135deg, #FF8C42 0%, #E85A71 100%);
+            padding: 4rem;
+            text-align: center;
+        }
+
+        .newsletter-section h2 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .newsletter-section p {
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 1.5rem;
+        }
+
+        .newsletter-form {
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .newsletter-form input {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+        }
+
+        .newsletter-form button {
+            background: #2D3436;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .newsletter-form button:hover {
+            background: #1a1f21;
+        }
+
+        /* Footer */
+        .footer {
+            background: #2D3436;
+            color: white;
+            padding: 3rem 4rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .footer-brand h3 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-brand p {
+            color: #ADB5BD;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background: #E85A71;
+        }
+
+        .footer-links h4 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: #FF8C42;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: #ADB5BD;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .working-hours {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 15px;
+        }
+
+        .working-hours h4 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            color: #FF8C42;
+            margin-bottom: 1rem;
+        }
+
+        .working-hours p {
+            color: #ADB5BD;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #ADB5BD;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 1024px) {
+            .info-cards-container,
+            .contact-form-container,
+            .footer-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-nav {
+                padding: 1rem 1.5rem;
+            }
+            
+            .main-nav .nav-links {
+                display: none;
+            }
+            
+            .contact-hero h1 {
+                font-size: 2rem;
+            }
+            
+            .contact-form-section,
+            .info-cards-section,
+            .newsletter-section,
+            .footer {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="logo">
+            <img src="{{ asset('images/logo/logo-charity.png') }}" alt="PAWHUB Logo">
+            <span>PAWHUB</span>
+        </div>
+        <div class="nav-links">
+            <a href="{{ path('app_home') }}">Homepage</a>
+            <a href="{{ path('app_about') }}">About Us</a>
+            <a href="{{ path('app_service') }}">Services</a>
+            <a href="{{ path('app_contact') }}" class="active">Contact Us</a>
+        </div>
+        <div class="nav-right">
+            <a href="tel:09479822291" class="phone-btn">
+                <i class="fas fa-phone-alt"></i>
+                <span>09479822291</span>
+            </a>
+            <div class="user-icon">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="contact-hero">
+        <h1>Contact Us</h1>
+        <div class="contact-hero-image">
+            <img src="{{ asset('images/doi.jpg') }}" alt="Cute Dog" onerror="this.src='https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=300&fit=crop'">
+        </div>
+    </section>
+
+    <!-- Info Cards Section -->
+    <section class="info-cards-section">
+        <div class="info-cards-container">
+            <div class="info-card">
+                <div class="info-card-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h3>Our Location</h3>
+                <p>123 Pet Street, Animal City<br>Philippines 1234</p>
+            </div>
+            <div class="info-card">
+                <div class="info-card-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h3>Our Email Address</h3>
+                <p>hello@pawhub.com<br>support@pawhub.com</p>
+            </div>
+            <div class="info-card">
+                <div class="info-card-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <h3>Contact Number</h3>
+                <p>09479822291</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section class="contact-form-section">
+        <div class="contact-form-container">
+            <div class="contact-form-image">
+                <img src="{{ asset('images/tob.jpg') }}" alt="Dog" onerror="this.src='https://images.unsplash.com/photo-1601758124096-1fd661873b95?w=500&h=600&fit=crop'">
+            </div>
+            <div class="contact-form-content">
+                <h2>Need Help? Contact Us</h2>
+                <form action="https://forms.gle/paz9FurrHidPTaPn8" method="get" target="_blank">
+                    <button type="submit" class="btn-submit">Go to Form</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+        <h2>Subscribe Our Newsletter</h2>
+        <p>Get the latest deals and offers right to your inbox.</p>
+        <form class="newsletter-form">
+            <input type="email" placeholder="Enter your email...">
+            <button type="submit">SUBSCRIBE</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h3>PAWHUB</h3>
+                <p>PawHub offers exceptional pet care services including grooming, boarding, and our dedicated team.</p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <h4>Pages</h4>
+                <ul>
+                    <li><a href="{{ path('app_home') }}">Home</a></li>
+                    <li><a href="{{ path('app_about') }}">About</a></li>
+                    <li><a href="{{ path('app_service') }}">Services</a></li>
+                    <li><a href="#">Team</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Contact Info</h4>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Pet Street</li>
+                    <li><i class="fas fa-phone"></i> 09479822291</li>
+                    <li><i class="fas fa-envelope"></i> hello@pawhub.com</li>
+                </ul>
+            </div>
+            <div class="working-hours">
+                <h4>Working Hours</h4>
+                <p><strong>Mon - Fri:</strong> 7am - 6pm</p>
+                <p><strong>Saturday:</strong> 9am - 4pm</p>
+                <p><strong>Sunday:</strong> Closed</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2022 - 2024 All Rights Reserved by PAWHUB</p>
+        </div>
+    </footer>
+{% endblock %}

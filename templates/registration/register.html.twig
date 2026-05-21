@@ -1,0 +1,247 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register - PAWHUB{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        body {
+            background: linear-gradient(120deg, #9BABAB 0%, #CCD0CF 100%);
+        }
+        .register-container {
+            display: flex;
+            min-height: 100vh;
+            background: none;
+        }
+        .register-left {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background: #CCD0CF;
+            border-radius: 2rem;
+            box-shadow: 0 4px 24px rgba(37, 55, 69, 0.27);
+            margin: 2rem;
+        }
+        .register-form {
+            width: 100%;
+            max-width: 400px;
+        }
+        .register-logo {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .register-logo img {
+            max-height: 80px;
+            width: auto;
+            margin-bottom: 1rem;
+        }
+        .register-title {
+            font-size: 2.2rem;
+            font-family: 'Baloo 2', cursive, sans-serif;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            color: #253745;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-control {
+            height: 50px;
+            border-radius: 1.2rem;
+            border: 2px solid #4A5C6A;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            width: 100%;
+            background: #CCD0CF;
+        }
+        .form-control:focus {
+            border-color: #253745;
+            box-shadow: 0 0 0 0.2rem rgba(37, 55, 69, 0.27);
+            outline: none;
+        }
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+        .form-check-input {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.5rem;
+            border: 2px solid #4A5C6A;
+            border-radius: 6px;
+        }
+        .form-check-input:checked {
+            background-color: #253745;
+            border-color: #253745;
+        }
+        .form-check-label {
+            font-size: 0.9375rem;
+            color: #253745;
+        }
+        .form-check-label a {
+            color: #253745;
+            text-decoration: none;
+        }
+        .form-check-label a:hover {
+            text-decoration: underline;
+        }
+        .btn-register {
+            width: 100%;
+            height: 50px;
+            border-radius: 1.2rem;
+            font-weight: 800;
+            font-size: 1.1rem;
+            background-color: #253745;
+            color: #CCD0CF;
+            border: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-family: 'Baloo 2', cursive, sans-serif;
+            box-shadow: 0 2px 8px #4A5C6A;
+        }
+        .btn-register:hover {
+            background-color: #4A5C6A;
+            color: #CCD0CF;
+            transform: scale(1.03);
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #4A5C6A;
+            font-size: 1rem;
+        }
+        .login-link a {
+            color: #253745;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+        .form-error {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        @media (max-width: 992px) {
+            .register-right {
+                display: none;
+            }
+            .register-left {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+        }
+        .register-right {
+            flex: 1;
+            background: linear-gradient(135deg, #9BABAB 0%, #253745 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            color: #CCD0CF;
+            border-radius: 2rem;
+            margin: 2rem;
+            box-shadow: 0 4px 24px rgba(37, 55, 69, 0.27);
+        }
+        .register-right .pet-illustration {
+            width: 220px;
+            height: auto;
+            margin: 2rem auto 1.5rem auto;
+            display: block;
+            border-radius: 1.5rem;
+            box-shadow: 0 2px 12px rgba(37, 55, 69, 0.27);
+        }
+    </style>
+{% endblock %}
+
+{% form_theme registrationForm _self %}
+
+{% block _registration_form_username_row %}
+    <div class="form-group">
+        {{ form_label(form, 'Username', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form, {'attr': {
+            'class': 'form-control',
+            'placeholder': 'Choose a username'
+        }}) }}
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}
+
+{% block _registration_form_email_row %}
+    <div class="form-group">
+        {{ form_label(form, 'Email', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form, {'attr': {
+            'class': 'form-control',
+            'placeholder': 'Enter your email address'
+        }}) }}
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}
+
+{% block _registration_form_plainPassword_row %}
+    <div class="form-group">
+        {{ form_label(form, 'Password', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form, {'attr': {
+            'class': 'form-control',
+            'placeholder': 'Create a password',
+            'autocomplete': 'new-password'
+        }}) }}
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}
+
+{% block _registration_form_agreeTerms_row %}
+    <div class="form-check">
+        {{ form_widget(form, {'attr': {'class': 'form-check-input'}}) }}
+        <label class="form-check-label" for="{{ form.vars.id }}">
+            I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+        </label>
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}
+
+{% block body %}
+<div class="register-container">
+    <div class="register-left">
+        <div class="register-form">
+            <div class="register-logo">
+                <img src="{{ asset('images/logo/logo-charity.png') }}" alt="PAWHUB" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgNTAiPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iNTAiIGZpbGw9IiM3QjRBRTIiLz48cGF0aCBkPSJNNDAgMTVjMC01LjUyMyA0LjQ3Ny0xMCAxMC0xMHMxMCA0LjQ3NyAxMCAxMHYyMGMwIDUuNTIzLTQuNDc3IDEwLTEwIDEwcy0xMC00LjQ3Ny0xMC0xMHYtMjB6IiBmaWxsPSIjRkZGRkZGIi8+PHBhdGggZD0iTTE0MCAxNWMwLTUuNTIzIDQuNDc3LTEwIDEwLTEwczEwIDQuNDc3IDEwIDEwdjIwYzAgNS41MjMtNC40NzcgMTAtMTAgMTBzLTEwLTQuNDc3LTEwLTEwdi0yMHoiIGZpbGw9IiNGRkZGRkYiLz48cGF0aCBkPSJNNzAgMTVjMC01LjUyMyA0LjQ3Ny0xMCAxMC0xMHMxMCA0Ljc3IDEwIDEwdjIwYzAgNS41MjMtNC40NzcgMTAtMTAgMTBzLTEwLTQuNDc3LTEwLTEwdi0yMHoiIGZpbGw9IiNGRkZGRkYiLz48L3N2Zz4='; this.alt='PAWHUB Logo'">
+            </div>
+            <h1 class="register-title">Create Account</h1>
+            
+            {{ form_start(registrationForm, {'attr': {'class': 'mt-4'}}) }}
+                {{ form_row(registrationForm.username) }}
+                {{ form_row(registrationForm.email) }}
+                {{ form_row(registrationForm.plainPassword, {
+                    'label': 'Password'
+                }) }}
+                {{ form_row(registrationForm.agreeTerms) }}
+
+                <button type="submit" class="btn-register">
+                    Create Account
+                </button>
+                
+                <div class="login-link">
+                    Already have an account? <a href="{{ path('app_login') }}">Sign in</a>
+                </div>
+            {{ form_end(registrationForm) }}
+        </div>
+    </div>
+    
+    <div class="register-right">
+        <div class="text-center">
+            <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 1rem; font-family: 'Baloo 2', cursive; color: #fff; letter-spacing: 1px;">PAWHUB</h2>
+            <p style="max-width: 400px; line-height: 1.6; font-size: 1.1rem; opacity: 0.95; color: #fff; font-weight: 500;">
+                Join our community of pet lovers and give your furry friends the care they deserve.
+            </p>
+            <img src="{{ asset('images/pets/cat1.jpg') }}" alt="Pet Register" class="pet-illustration" />
+        </div>
+    </div>
+</div>
+{% endblock %}

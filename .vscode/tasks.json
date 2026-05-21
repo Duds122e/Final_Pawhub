@@ -1,0 +1,29 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Doctrine migration for Appointment",
+			"type": "shell",
+			"command": "php bin/console make:migration && php bin/console doctrine:migrations:migrate --no-interaction",
+			"group": "build"
+		},
+		{
+			"label": "Run Doctrine migration for Appointment",
+			"type": "shell",
+			"command": "php bin/console make:migration; php bin/console doctrine:migrations:migrate --no-interaction",
+			"group": "build"
+		},
+		{
+			"label": "Run Doctrine migration for Appointment",
+			"type": "shell",
+			"command": "php bin/console make:migration && php bin/console doctrine:migrations:migrate --no-interaction",
+			"group": "build"
+		},
+		{
+			"label": "Run Doctrine migration for Appointment (PowerShell)",
+			"type": "shell",
+			"command": "php bin/console make:migration; php bin/console doctrine:migrations:migrate --no-interaction",
+			"group": "build"
+		}
+	]
+}

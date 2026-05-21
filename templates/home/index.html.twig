@@ -1,0 +1,1167 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}PAWHUB - Pet Care & Adoption{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            font-family: 'Nunito', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .main-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 4rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .main-nav .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .main-nav .logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .main-nav .logo span {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #2D3436;
+        }
+
+        .main-nav .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .main-nav .nav-links a {
+            color: #636E72;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .main-nav .nav-links a:hover,
+        .main-nav .nav-links a.active {
+            color: #E85A71;
+        }
+
+        .main-nav .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .main-nav .phone-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #E85A71;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .user-icon {
+            width: 35px;
+            height: 35px;
+            background: #FFE5E5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #E85A71;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #FFF8F3 0%, #FFEEE5 50%, #FFE8E8 100%);
+            display: flex;
+            align-items: center;
+            padding: 6rem 4rem 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            right: 5%;
+            width: 300px;
+            height: 300px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="%23FFB8B8" stroke-width="0.5" stroke-dasharray="5,5"/></svg>');
+            opacity: 0.5;
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 4rem;
+            align-items: center;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            flex: 1;
+        }
+
+        .hero-tagline {
+            color: #E85A71;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .hero-title {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 3.2rem;
+            font-weight: 700;
+            color: #2D3436;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero-title .highlight {
+            color: #E85A71;
+        }
+
+        .hero-text {
+            color: #636E72;
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            max-width: 450px;
+        }
+
+        .btn-make-call {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #E85A71 0%, #FF8C42 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 10px 30px rgba(232, 90, 113, 0.3);
+        }
+
+        .btn-make-call:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(232, 90, 113, 0.4);
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .hero-image-wrapper {
+            position: relative;
+            width: 450px;
+            height: 450px;
+        }
+
+        .hero-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-shape {
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .hero-shape-1 {
+            width: 100%;
+            height: 100%;
+            background: #FFB347;
+            top: 20px;
+            right: -20px;
+            z-index: 1;
+        }
+
+        .hero-shape-2 {
+            width: 80px;
+            height: 80px;
+            background: #E85A71;
+            top: 20%;
+            left: -10%;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .hero-shape-3 {
+            width: 60px;
+            height: 60px;
+            background: #4ECDC4;
+            bottom: 30%;
+            left: -5%;
+            z-index: 3;
+        }
+
+        .play-btn {
+            position: absolute;
+            top: 30%;
+            left: 10%;
+            width: 60px;
+            height: 60px;
+            background: rgba(232, 90, 113, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            z-index: 4;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .play-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 5rem 4rem;
+            background: white;
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem 1.5rem;
+            border-radius: 20px;
+            background: white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        .feature-card:nth-child(1) .feature-icon {
+            background: #E8F6F3;
+            color: #1ABC9C;
+        }
+
+        .feature-card:nth-child(2) .feature-icon {
+            background: #FEF3E2;
+            color: #F39C12;
+        }
+
+        .feature-card:nth-child(3) .feature-icon {
+            background: #FDEDEC;
+            color: #E85A71;
+        }
+
+        .feature-card:nth-child(4) .feature-icon {
+            background: #F5EEF8;
+            color: #9B59B6;
+        }
+
+        .feature-card h3 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1.1rem;
+            color: #2D3436;
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-card p {
+            color: #636E72;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        /* Services Section */
+        .services-section {
+            padding: 5rem 4rem;
+            background: #F8F9FA;
+        }
+
+        .services-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .services-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .services-tagline {
+            color: #E85A71;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .services-title {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2D3436;
+        }
+
+        .services-title span {
+            color: #E85A71;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+        }
+
+        .service-card:nth-child(1) .service-icon {
+            background: #FFE5F0;
+            color: #FF6B9D;
+        }
+
+        .service-card:nth-child(2) .service-icon {
+            background: #FFF3E0;
+            color: #FF8C42;
+        }
+
+        .service-card:nth-child(3) .service-icon {
+            background: #E0F7FA;
+            color: #00BCD4;
+        }
+
+        .service-card h3 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1.3rem;
+            color: #2D3436;
+            margin-bottom: 1rem;
+        }
+
+        .service-card p {
+            color: #636E72;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-price {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #E85A71;
+        }
+
+        /* Wellness Section */
+        .wellness-section {
+            padding: 5rem 4rem;
+            background: linear-gradient(135deg, #FFF8F3 0%, #FFEEE5 100%);
+        }
+
+        .wellness-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .wellness-content {
+            flex: 1;
+        }
+
+        .wellness-tagline {
+            color: #E85A71;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .wellness-title {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2D3436;
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+        }
+
+        .wellness-title span {
+            color: #E85A71;
+        }
+
+        .wellness-text {
+            color: #636E72;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .wellness-features {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .wellness-feature {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .wellness-feature-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #E85A71 0%, #FF8C42 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .wellness-feature-text h4 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1rem;
+            color: #2D3436;
+            margin-bottom: 0.2rem;
+        }
+
+        .wellness-feature-text p {
+            color: #636E72;
+            font-size: 0.8rem;
+        }
+
+        .wellness-image {
+            flex: 1;
+            position: relative;
+            display: flex;
+            justify-content: center;
+        }
+
+        .wellness-image-wrapper {
+            position: relative;
+        }
+
+        .wellness-image-wrapper img {
+            width: 400px;
+            height: auto;
+            border-radius: 30px;
+        }
+
+        .stat-card {
+            position: absolute;
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card-1 {
+            top: 10%;
+            right: -20px;
+        }
+
+        .stat-card-2 {
+            bottom: 20%;
+            left: -30px;
+        }
+
+        .stat-number {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #E85A71;
+        }
+
+        .stat-label {
+            color: #636E72;
+            font-size: 0.75rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 5rem 4rem;
+            background: linear-gradient(135deg, #1ABC9C 0%, #16A085 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        .cta-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-content {
+            flex: 1;
+        }
+
+        .cta-tagline {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .cta-title {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+
+        .cta-title span {
+            color: #FFE5E5;
+        }
+
+        .cta-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .btn-book {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #E85A71;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 10px 30px rgba(232, 90, 113, 0.3);
+        }
+
+        .btn-book:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(232, 90, 113, 0.4);
+        }
+
+        .cta-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .cta-image img {
+            width: 350px;
+            height: auto;
+            border-radius: 20px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #2D3436;
+            color: white;
+            padding: 4rem 4rem 2rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .footer-logo span {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .footer-desc {
+            color: #B2BEC3;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            background: #E85A71;
+            transform: translateY(-3px);
+        }
+
+        .footer-links h4,
+        .footer-services h4,
+        .footer-contact h4 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .footer-links ul,
+        .footer-services ul,
+        .footer-contact ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li,
+        .footer-services li,
+        .footer-contact li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a,
+        .footer-services a {
+            color: #B2BEC3;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover,
+        .footer-services a:hover {
+            color: #E85A71;
+        }
+
+        .footer-contact li {
+            color: #B2BEC3;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-contact i {
+            color: #E85A71;
+            width: 20px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-bottom p {
+            color: #B2BEC3;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .footer-legal {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .footer-legal a {
+            color: #B2BEC3;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-legal a:hover {
+            color: #E85A71;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-container,
+            .wellness-container,
+            .cta-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .hero-title,
+            .wellness-title,
+            .cta-title {
+                font-size: 2rem;
+            }
+
+            .hero-image-wrapper,
+            .wellness-image-wrapper img {
+                width: 350px;
+                height: 350px;
+            }
+
+            .stat-card-1,
+            .stat-card-2 {
+                position: relative;
+                right: auto;
+                left: auto;
+                top: auto;
+                bottom: auto;
+                margin-top: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .main-nav .nav-links {
+                display: none;
+            }
+
+            .hero-section,
+            .features-section,
+            .wellness-section,
+            .cta-section {
+                padding: 5rem 1.5rem 3rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-image-wrapper,
+            .wellness-image-wrapper img {
+                width: 280px;
+                height: 280px;
+            }
+
+            .footer {
+                padding: 3rem 1.5rem 1.5rem;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="logo">
+            <img src="{{ asset('images/logo/logo-charity.png') }}" alt="PAWHUB Logo">
+            <span>PAWHUB</span>
+        </div>
+        <div class="nav-links">
+            <a href="{{ path('app_home') }}" class="active">Homepage</a>
+            <a href="{{ path('app_about') }}">About Us</a>
+            <a href="{{ path('app_service') }}">Services</a>
+            <a href="{{ path('app_contact') }}">Contact Us</a>
+        </div>
+        <div class="nav-right">
+            <a href="tel:+639123456789" class="phone-btn">
+                <i class="fas fa-phone-alt"></i>
+                <span>09479822291</span>
+            </a>
+            <div class="user-icon">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-tagline">Happy Pets, Happy Hearts</div>
+                <h1 class="hero-title">
+                    Loving <span class="highlight">Pet</span><br>
+                    Care Partners
+                </h1>
+                <p class="hero-text">
+                    At Loving Pet Care Partners, we understand the joy your pets bring to your life. Our mission is to ensure they receive the best care possible, from cozy accommodations to playful activities.
+                </p>
+                <a href="tel:+639123456789" class="btn-make-call">
+                    <i class="fas fa-phone-alt"></i>
+                    Make a Call
+                </a>
+            </div>
+            <div class="hero-image">
+                <div class="hero-image-wrapper">
+                    <div class="hero-shape hero-shape-1"></div>
+                    <div class="hero-shape hero-shape-2">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="hero-shape hero-shape-3"></div>
+                    <div class="play-btn">
+                        <i class="fas fa-play"></i>
+                    </div>
+                    <img src="{{ asset('images/pets/hero-dog.png') }}" alt="Happy Beagle Dog" onerror="this.src='https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=500&h=500&fit=crop'">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="features-container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-certificate"></i>
+                    </div>
+                    <h3>Certified Professionals</h3>
+                    <p>Skilled hands and big hearts—our experts are fully trained to provide the best experience for your furry friends.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <h3>Customized Care</h3>
+                    <p>Because no two paws are the same, we provide personalized love and routines that fit your pet perfectly.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-stethoscope"></i>
+                    </div>
+                    <h3>Vet-Recommended</h3>
+                    <p>Health is our priority. We follow the best veterinary practices to keep every tail wagging and every cat purring.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-heart"></i>
+                    </div>
+                    <h3>Safe &amp; Loving</h3>
+                    <p>Your pet's "home away from home," filled with cuddles, playtime, and a whole lot of security.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services-section">
+        <div class="services-container">
+            <div class="services-header">
+                <div class="services-tagline">What We Offer</div>
+                <h2 class="services-title">
+                    Our <span>Services</span>
+                </h2>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-cut"></i>
+                    </div>
+                    <h3>Pet Grooming</h3>
+                    <p>Professional grooming services to keep your pet looking and feeling their best. Baths, haircuts, nail trimming, and more.</p>
+                    <div class="service-price">From ₱500</div>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3>Pet Boarding</h3>
+                    <p>Safe and comfortable boarding facilities for when you're away. 24/7 care and daily updates for peace of mind.</p>
+                    <div class="service-price">From ₱800/day</div>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Pet Training</h3>
+                    <p>Expert training programs for obedience, behavior modification, and socialization. Positive reinforcement methods.</p>
+                    <div class="service-price">From ₱1,200</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wellness Section -->
+    <section class="wellness-section">
+        <div class="wellness-container">
+            <div class="wellness-content">
+                <div class="wellness-tagline">Welcome to PAWHUB Pet Care</div>
+                <h2 class="wellness-title">
+                    Your Trusted Partner in<br><span>Pet Wellness</span>
+                </h2>
+                <p class="wellness-text">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo.
+                </p>
+                <div class="wellness-features">
+                    <div class="wellness-feature">
+                        <div class="wellness-feature-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="wellness-feature-text">
+                            <h4>Passionate Pet Care Professionals</h4>
+                            <p>Far far away, behind the word mountains</p>
+                        </div>
+                    </div>
+                    <div class="wellness-feature">
+                        <div class="wellness-feature-icon">
+                            <i class="fas fa-paw"></i>
+                        </div>
+                        <div class="wellness-feature-text">
+                            <h4>Tailored Pet Care Services</h4>
+                            <p>Separated they live in Bookmarksgrove</p>
+                        </div>
+                    </div>
+                    <div class="wellness-feature">
+                        <div class="wellness-feature-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="wellness-feature-text">
+                            <h4>Personalized Pet Experiences</h4>
+                            <p>Right at the coast of the Semantics</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="wellness-image">
+                <div class="wellness-image-wrapper">
+                    <img src="{{ asset('images/pets/wellness-pets.png') }}" alt="Happy Dog and Cat" onerror="this.src='https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=500&h=400&fit=crop'">
+                    <div class="stat-card stat-card-1">
+                        <div class="stat-number">129k</div>
+                        <div class="stat-label">Experience Pet</div>
+                    </div>
+                    <div class="stat-card stat-card-2">
+                        <div class="stat-number">24+</div>
+                        <div class="stat-label">Trusted Partner</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-container">
+            <div class="cta-content">
+                <div class="cta-tagline">Book Now for Ultimate Care!</div>
+                <h2 class="cta-title">
+                    Book a Service Now &amp;<br><span>Start Pampering your Pet!</span>
+                </h2>
+                <p class="cta-text">
+                    Your pet's comfort is our top priority. Browse our available slots and book with confidence, knowing that your pet is in the hands of professionals who treat them like family.
+                </p>
+                <a href="{{ path('app_service') }}" class="btn-book">
+                    Book Now
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            <div class="cta-image">
+                <img src="{{ asset('images/pets/cta-person.png') }}" alt="Happy person with pets" onerror="this.src='https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=500&fit=crop'">
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <img src="{{ asset('images/logo/logo-charity.png') }}" alt="PAWHUB Logo">
+                        <span>PAWHUB</span>
+                    </div>
+                    <p class="footer-desc">Your trusted partner in pet care. We provide loving, professional services for your furry family members.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{{ path('app_home') }}">Home</a></li>
+                        <li><a href="{{ path('app_about') }}">About Us</a></li>
+                        <li><a href="{{ path('app_service') }}">Services</a></li>
+                        <li><a href="{{ path('app_contact') }}">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-services">
+                    <h4>Our Services</h4>
+                    <ul>
+                        <li><a href="{{ path('app_service') }}">Pet Grooming</a></li>
+                        <li><a href="{{ path('app_service') }}">Pet Boarding</a></li>
+                        <li><a href="{{ path('app_service') }}">Pet Training</a></li>
+                        <li><a href="{{ path('app_adoption') }}">Pet Adoption</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        <li><i class="fas fa-phone"></i> 09479822291</li>
+                        <li><i class="fas fa-envelope"></i> dudsgutib@gmail.com</li>
+                        <li><i class="fas fa-map-marker-alt"></i> Philippines</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; {{ "now"|date("Y") }} PAWHUB Pet Care. All rights reserved.</p>
+                <div class="footer-legal">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+{% endblock %}

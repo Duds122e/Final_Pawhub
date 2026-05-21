@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Pet — PAWHUB{% endblock %}
+
+{% block body %}
+<section style="padding:24px;">
+    <h2>Create Pet</h2>
+    <div style="background:white;padding:16px;border-radius:8px;box-shadow:0 4px 8px rgba(0,0,0,0.04);margin-top:12px;">
+        {{ form_start(form) }}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            {{ form_row(form.name) }}
+            {{ form_row(form.type) }}
+            {{ form_row(form.breed) }}
+            {{ form_row(form.age) }}
+            {{ form_row(form.status) }}
+        </div>
+        <div style="margin-top:12px;">{{ form_row(form.save) }}</div>
+        {{ form_end(form) }}
+    </div>
+</section>
+{% endblock %}

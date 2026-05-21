@@ -1,0 +1,61 @@
+services:
+  paw_mysql:
+    image: mysql:8.0
+    container_name: paw_mysql_container
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: paw_root
+      MYSQL_DATABASE: paw_db
+      MYSQL_USER: paw_user
+      MYSQL_PASSWORD: paw_password
+    ports:
+      - "3310:3306"
+    volumes:
+      - paw_mysql_data:/var/lib/mysql
+    networks:
+      - paw_network
+
+  paw_phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: paw_phpmyadmin_container
+    restart: unless-stopped
+    environment:
+      PMA_HOST: paw_mysql
+      PMA_USER: paw_user
+      PMA_PASSWORD: paw_password
+    ports:
+      - "8086:80"
+    depends_on:
+      - paw_mysql
+    networks:
+      - paw_network
+
+  ###> symfony/mercure-bundle ###
+  mercure:
+    image: dunglas/mercure
+    restart: unless-stopped
+    environment:
+      MERCURE_PUBLISHER_JWT_KEY: '!ChangeThisMercureHubJWTSecretKey!'
+      MERCURE_SUBSCRIBER_JWT_KEY: '!ChangeThisMercureHubJWTSecretKey!'
+      MERCURE_EXTRA_DIRECTIVES: |
+        cors_origins http://127.0.0.1:8000
+    command: /usr/bin/caddy run --config /etc/caddy/dev.Caddyfile
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost/healthz"]
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    volumes:
+      - mercure_data:/data
+      - mercure_config:/config
+    networks:
+      - paw_network
+  ###< symfony/mercure-bundle ###
+
+volumes:
+  paw_mysql_data:
+  mercure_data:
+  mercure_config:
+
+networks:
+  paw_network:

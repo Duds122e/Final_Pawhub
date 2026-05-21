@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../vendor/symfony/routing/Loader/schema/routing.schema.json
+
+# This file is the entry point to configure the routes of your app.
+# Methods with the #[Route] attribute are automatically imported.
+# See also https://symfony.com/doc/current/routing.html
+
+# To list all registered routes, run the following command:
+#   bin/console debug:router
+
+controllers:
+    resource: routing.controllers
+
+# Home routes (must come before controller routes to take precedence)
+home:
+    resource: routes/home.yaml
+
+# API Login route - handled by security system
+api_login:
+    path: /api/login
+
+# Appointment routes
+appointment_index:
+    path: /appointment
+    controller: App\Controller\AppointmentController::index
+
+appointment_new:
+    path: /appointment/new
+    controller: App\Controller\AppointmentController::new

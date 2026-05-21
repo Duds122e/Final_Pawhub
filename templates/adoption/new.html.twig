@@ -1,0 +1,451 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Adoption Request — PAWHUB{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* PAWHUB Theme Styles */
+        .page-wrapper {
+            padding: 40px;
+            background: linear-gradient(135deg, #FFF8F3 0%, #FFEEE5 50%, #FFE8E8 100%);
+            min-height: calc(100vh - 80px);
+        }
+        .adoption-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .adoption-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .adoption-header h1 {
+            font-family: 'Fredoka', cursive, sans-serif;
+            color: #2D3436;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .adoption-header p {
+            color: #636E72;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        .adoption-form {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 10px 40px rgba(232, 90, 113, 0.08);
+            margin-bottom: 3rem;
+        }
+        fieldset {
+            border: 2px solid #FFE5E5;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            background: #FFF8F3;
+        }
+        fieldset legend {
+            background: white;
+            padding: 0.5rem 1rem;
+            border: 2px solid #FFE5E5;
+            border-radius: 12px;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #E85A71;
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #636E72;
+        }
+        /* Enhanced Select Dropdown */
+        .form-control {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid #FFE5E5;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background: white;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23E85A71' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.2em;
+            padding-right: 2.5rem;
+            cursor: pointer;
+        }
+        .form-control::-ms-expand {
+            display: none;
+        }
+        .form-control:focus {
+            border-color: #E85A71;
+            box-shadow: 0 0 0 3px rgba(232, 90, 113, 0.1);
+            outline: none;
+        }
+        /* Pet Selection */
+        .pet-selection {
+            margin: 2rem 0;
+        }
+        .pet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin: 1.5rem 0;
+        }
+        .pet-option {
+            border: 2px solid #FFE5E5;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .pet-option:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(232, 90, 113, 0.15);
+        }
+        .pet-option.selected {
+            border-color: #E85A71;
+            box-shadow: 0 0 0 3px rgba(232, 90, 113, 0.2);
+        }
+        .pet-option img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-bottom: 1px solid #FFE5E5;
+        }
+        .pet-info {
+            padding: 1.25rem;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .pet-info h4 {
+            margin: 0 0 0.5rem;
+            color: #2D3436;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1.1rem;
+        }
+        .pet-meta {
+            font-size: 0.9rem;
+            color: #636E72;
+        }
+        .pet-meta span {
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+        input[type="radio"] {
+            display: none;
+        }
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(90deg, #E85A71 0%, #FF8C42 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-family: 'Fredoka', cursive, sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(232, 90, 113, 0.3);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(232, 90, 113, 0.4);
+        }
+        /* Form Buttons */
+        .form-actions {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid #FFE5E5;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.65rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .form-control {
+                padding: 1rem 1.2rem;
+                font-size: 1.05rem;
+                min-height: 3.5rem;
+            }
+            select.form-control option {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+            .adoption-container {
+                padding: 0 1rem;
+            }
+            .adoption-form {
+                padding: 1.25rem;
+            }
+            .adoption-header h1 {
+                font-size: 1.75rem;
+                margin-bottom: 0.75rem;
+            }
+            .adoption-header p {
+                font-size: 1rem;
+            }
+            fieldset {
+                padding: 1.25rem;
+                margin: 1.5rem 0;
+            }
+            .pet-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+            .form-actions {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            .btn {
+                width: 100%;
+                padding: 0.75rem;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="adoption-container">
+        <div class="adoption-header">
+            <h1>💝 Adoption Application</h1>
+            <p>Please select a pet and fill out this form to help us understand your home environment and experience with pets.</p>
+        </div>
+        
+        <div class="adoption-form">
+            {{ form_start(form, {
+                'attr': {
+                    'class': 'adoption-form-container',
+                    'novalidate': 'novalidate'
+                }
+            }) }}
+                {% for message in app.flashes('error') %}
+                    <div class="alert alert-danger">{{ message }}</div>
+                {% endfor %}
+                
+                <div class="form-group">
+                    {{ form_label(form.status, 'Status *', {'label_attr': {'class': 'required'}}) }}
+                    {{ form_widget(form.status, {
+                        'attr': {
+                            'class': 'form-control',
+                            'required': 'required'
+                        }
+                    }) }}
+                    {{ form_errors(form.status) }}
+                </div>
+                
+                <div class="form-group">
+                    <label class="required">Select Pet to Adopt</label>
+                    <div style="margin-bottom:1rem;">
+                        <select name="select_pet" class="form-control" required>
+                            <option value="">-- Select Pet --</option>
+                            <option value="1">Buddy (Dog, Male, 2 years)</option>
+                            <option value="2">Luna (Cat, Female, 1 year)</option>
+                            <option value="3">Thumper (Rabbit, Male, 6 months)</option>
+                        </select>
+                    </div>
+                    <div class="pet-selection">
+                        <div class="pet-grid">
+                            <!-- Pet Option 1 -->
+                            <label class="pet-option">
+                                <input type="radio" name="selected_pet" value="1" required>
+                                <img src="{{ asset('images/pets/dog1.jpg') }}" alt="Buddy the Dog" onerror="this.src='https://source.unsplash.com/random/400x300/?dog';">
+                                <div class="pet-info">
+                                    <h4>Buddy</h4>
+                                    <div class="pet-meta">
+                                        <span><i class="fas fa-dog"></i> Dog</span>
+                                        <span><i class="fas fa-venus-mars"></i> Male</span>
+                                        <span><i class="fas fa-birthday-cake"></i> 2 years</span>
+                                    </div>
+                                </div>
+                            </label>
+                            
+                            <!-- Pet Option 2 -->
+                            <label class="pet-option">
+                                <input type="radio" name="selected_pet" value="2" required>
+                                <img src="{{ asset('images/pets/cat1.jpg') }}" alt="Luna the Cat" onerror="this.src='https://source.unsplash.com/random/400x300/?cat';">
+                                <div class="pet-info">
+                                    <h4>Luna</h4>
+                                    <div class="pet-meta">
+                                        <span><i class="fas fa-cat"></i> Cat</span>
+                                        <span><i class="fas fa-venus"></i> Female</span>
+                                        <span><i class="fas fa-birthday-cake"></i> 1 year</span>
+                                    </div>
+                                </div>
+                            </label>
+                            
+                            <!-- Pet Option 3 -->
+                            <label class="pet-option">
+                                <input type="radio" name="selected_pet" value="3" required>
+                                <img src="{{ asset('images/pets/rabbit1.jpg') }}" alt="Thumper the Rabbit" onerror="this.src='https://source.unsplash.com/random/400x300/?rabbit';">
+                                <div class="pet-info">
+                                    <h4>Thumper</h4>
+                                    <div class="pet-meta">
+                                        <span><i class="fas fa-paw"></i> Rabbit</span>
+                                        <span><i class="fas fa-mars"></i> Male</span>
+                                        <span><i class="fas fa-birthday-cake"></i> 6 months</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <fieldset>
+                    <legend>Home and Household Details</legend>
+                    {{ form_row(form.residenceType, {
+                        'attr': {'class': 'form-control'},
+                        'row_attr': {'class': 'form-group'}
+                    }) }}
+                    {{ form_row(form.householdMembers, {
+                        'attr': {'class': 'form-control'},
+                        'row_attr': {'class': 'form-group'}
+                    }) }}
+                    {{ form_row(form.homeAgreement, {
+                        'attr': {'class': 'form-control'},
+                        'row_attr': {'class': 'form-group'}
+                    }) }}
+                </fieldset>
+                
+                <fieldset>
+                    <legend>Pet History and Experience</legend>
+                    {{ form_row(form.currentPets, {
+                        'attr': {'class': 'form-control'},
+                        'row_attr': {'class': 'form-group'}
+                    }) }}
+                    {{ form_row(form.previousPets, {
+                        'attr': {'class': 'form-control'},
+                        'row_attr': {'class': 'form-group'}
+                    }) }}
+                    {{ form_row(form.petExperience, {
+                        'attr': {'class': 'form-control'},
+                        'row_attr': {'class': 'form-group'}
+                    }) }}
+                    {{ form_row(form.spayNeuter, {
+                        'attr': {'class': 'form-control'},
+                        'row_attr': {'class': 'form-group'}
+                    }) }}
+                </fieldset>
+                
+                <fieldset>
+                    <legend>Pet Care and Commitment</legend>
+                    {{ form_row(form.dailySchedule, {
+                        'attr': {'class': 'form-control', 'rows': '4'},
+                        'row_attr': {'class': 'form-group'}
+                    }) }}
+                    {{ form_row(form.financials, {
+                        'attr': {'class': 'form-control'},
+                        'row_attr': {'class': 'form-group'}
+                    }) }}
+                    {{ form_row(form.contingencyPlan, {
+                        'attr': {'class': 'form-control'},
+                        'row_attr': {'class': 'form-group'}
+                    }) }}
+                </fieldset>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-heart"></i> Submit Application
+                    </button>
+                </div>
+            {{ form_end(form, {'render_rest': false}) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Make pet cards interactive
+            const petOptions = document.querySelectorAll('.pet-option');
+            
+            petOptions.forEach(option => {
+                const radio = option.querySelector('input[type="radio"]');
+                
+                // Highlight selected pet
+                option.addEventListener('click', function() {
+                    // Remove selected class from all options
+                    petOptions.forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    
+                    // Check the radio input
+                    radio.checked = true;
+                });
+                
+                // Handle keyboard navigation
+                option.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        radio.checked = true;
+                        this.click();
+                    }
+                });
+                
+                // Update visual state when radio is checked programmatically
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        petOptions.forEach(opt => {
+                            opt.classList.remove('selected');
+                        });
+                        option.classList.add('selected');
+                    }
+                });
+            });
+            
+            // Form validation
+            const form = document.querySelector('.adoption-form-container');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const selectedPet = document.querySelector('input[name="selected_pet"]:checked');
+                    if (!selectedPet) {
+                        e.preventDefault();
+                        alert('Please select a pet to adopt');
+                        return false;
+                    }
+                    return true;
+                });
+            }
+        });
+    </script>
+{% endblock %}
