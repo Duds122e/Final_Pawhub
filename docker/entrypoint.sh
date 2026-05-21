@@ -1,24 +1,66 @@
 #!/bin/sh
 set -e
 
-DB_HOST="${DB_HOST:-paw_mysql}"
-DB_USER="${MYSQL_USER:-paw_user}"
-DB_PASS="${MYSQL_PASSWORD:-paw_password}"
+# Railway MySQL plugin exposes MYSQL_URL; Symfony expects DATABASE_URL
+if [ -z "$DATABASE_URL" ] && [ -n "$MYSQL_URL" ]; then
+  export DATABASE_URL="$MYSQL_URL"
+fi
 
-echo "Waiting for MySQL at ${DB_HOST}..."
-i=0
-while [ "$i" -lt 30 ]; do
-  if php -r "new PDO('mysql:host=${DB_HOST};port=3306', '${DB_USER}', '${DB_PASS}');" 2>/dev/null; then
-    echo "MySQL is ready."
-    break
+PORT="${PORT:-8000}"
+export PORT
+
+wait_for_database() {
+  if [ -n "$DATABASE_URL" ]; then
+    echo "Waiting for database (DATABASE_URL)..."
+    i=0
+    while [ "$i" -lt 60 ]; do
+      if php -r '
+        $url = getenv("DATABASE_URL");
+        if (!$url) { exit(1); }
+        $p = parse_url($url);
+        $host = $p["host"] ?? "127.0.0.1";
+        $port = $p["port"] ?? 3306;
+        $user = urldecode($p["user"] ?? "root");
+        $pass = urldecode($p["pass"] ?? "");
+        try {
+          new PDO("mysql:host={$host};port={$port}", $user, $pass);
+          exit(0);
+        } catch (Throwable $e) {
+          exit(1);
+        }
+      ' 2>/dev/null; then
+        echo "Database is ready."
+        return 0
+      fi
+      i=$((i + 1))
+      sleep 2
+    done
+    echo "Database did not become ready in time."
+    return 1
   fi
-  i=$((i + 1))
-  sleep 2
-done
 
-if [ "$i" -ge 30 ]; then
+  DB_HOST="${DB_HOST:-paw_mysql}"
+  DB_USER="${MYSQL_USER:-paw_user}"
+  DB_PASS="${MYSQL_PASSWORD:-paw_password}"
+
+  echo "Waiting for MySQL at ${DB_HOST}..."
+  i=0
+  while [ "$i" -lt 30 ]; do
+    if php -r "new PDO('mysql:host=${DB_HOST};port=3306', '${DB_USER}', '${DB_PASS}');" 2>/dev/null; then
+      echo "MySQL is ready."
+      return 0
+    fi
+    i=$((i + 1))
+    sleep 2
+  done
   echo "MySQL did not become ready in time."
-  exit 1
+  return 1
+}
+
+if [ "${SKIP_DB_WAIT:-0}" != "1" ]; then
+  wait_for_database || exit 1
+else
+  echo "Skipping database wait (SKIP_DB_WAIT=1)."
 fi
 
 mkdir -p var/cache var/log
@@ -37,7 +79,15 @@ if [ "${CREATE_ADMIN:-1}" = "1" ]; then
   php bin/console app:create-admin admin admin123 --force --no-interaction 2>/dev/null || true
 fi
 
-php bin/console cache:clear --no-warmup 2>/dev/null || true
+APP_ENV="${APP_ENV:-dev}"
+if [ "$APP_ENV" = "prod" ]; then
+  php bin/console cache:clear --env=prod --no-warmup 2>/dev/null || true
+else
+  php bin/console cache:clear --no-warmup 2>/dev/null || true
+fi
 
-echo "Starting application..."
+echo "Starting application on 0.0.0.0:${PORT}..."
+if [ "$#" -eq 0 ]; then
+  exec php -S "0.0.0.0:${PORT}" -t public/
+fi
 exec "$@"
