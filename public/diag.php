@@ -1,6 +1,6 @@
 <?php
 
-// Standalone diagnostics (not routed through Symfony): /diag.php?key=pawhub-diag
+// Standalone diagnostics: /diag.php?key=pawhub-diag
 if (($_GET['key'] ?? '') !== 'pawhub-diag') {
     http_response_code(404);
     exit;
@@ -11,34 +11,45 @@ header('Content-Type: text/plain; charset=utf-8');
 require dirname(__DIR__).'/vendor/autoload.php';
 
 $env = getenv('APP_ENV') ?: 'prod';
-$debug = filter_var(getenv('APP_DEBUG') ?: '0', FILTER_VALIDATE_BOOL);
+$debug = isset($_GET['debug']) && $_GET['debug'] === '1';
 
 try {
     $kernel = new App\Kernel($env, $debug);
     $kernel->boot();
     $container = $kernel->getContainer();
 
-    echo "APP_ENV={$env}\n";
-    echo 'DATABASE_URL='.(getenv('DATABASE_URL') ? 'set' : 'MISSING')."\n";
-    echo 'DEFAULT_URI='.(getenv('DEFAULT_URI') ?: 'MISSING')."\n\n";
+    $lines = [];
+    $lines[] = 'APP_ENV='.$env;
+    $lines[] = 'DATABASE_URL='.(getenv('DATABASE_URL') ? 'set' : 'MISSING');
+    $lines[] = 'DEFAULT_URI='.(getenv('DEFAULT_URI') ?: 'MISSING');
+    $lines[] = 'RAILWAY_PUBLIC_DOMAIN='.(getenv('RAILWAY_PUBLIC_DOMAIN') ?: 'not set');
+    $lines[] = 'session.save_path='.ini_get('session.save_path');
+    $lines[] = '';
 
     $conn = $container->get('doctrine')->getConnection();
     foreach (['user', 'pet', 'adoption_request', 'appointment', 'service'] as $table) {
         try {
-            echo "{$table}: ".$conn->fetchOne("SELECT COUNT(*) FROM {$table}")."\n";
+            $lines[] = "{$table}: ".$conn->fetchOne("SELECT COUNT(*) FROM {$table}");
         } catch (Throwable $e) {
-            echo "{$table}: ERROR ".$e->getMessage()."\n";
+            $lines[] = "{$table}: ERROR ".$e->getMessage();
         }
     }
 
-    echo "\nRendering dashboard via controller:\n";
+    $lines[] = '';
+    $lines[] = 'Dashboard request (unauthenticated — expect 302 or 401, not 500):';
+
+    ob_start();
     $request = Symfony\Component\HttpFoundation\Request::create('/dashboard', 'GET');
     $response = $kernel->handle($request);
-    echo 'HTTP '.$response->getStatusCode().' ('.strlen($response->getContent())." bytes)\n";
+    ob_end_clean();
+
+    $lines[] = 'HTTP '.$response->getStatusCode().' ('.strlen($response->getContent()).' bytes)';
     if ($response->getStatusCode() >= 500) {
-        echo substr($response->getContent(), 0, 2000)."\n";
+        $lines[] = substr($response->getContent(), 0, 1500);
     }
     $kernel->terminate($request, $response);
+
+    echo implode("\n", $lines);
 } catch (Throwable $e) {
     echo "FATAL: ".$e->getMessage()."\n\n".$e->getTraceAsString();
 }
