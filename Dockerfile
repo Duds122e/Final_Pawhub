@@ -42,8 +42,9 @@ COPY .env.docker .env
 
 RUN composer dump-autoload --optimize --classmap-authoritative --no-dev \
     && test -f vendor/autoload_runtime.php \
-    && mkdir -p var/cache var/log public/bundles config/jwt \
-    && chmod -R 777 var
+    && mkdir -p var/cache/sessions var/log public/bundles config/jwt \
+    && chmod -R 777 var \
+    && echo "session.save_path=/var/www/html/var/cache/sessions" > /usr/local/etc/php/conf.d/99-pawhub-sessions.ini
 
 COPY docker/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh \

@@ -3,7 +3,7 @@ framework:
     trusted_headers: ['x-forwarded-for', 'x-forwarded-host', 'x-forwarded-proto', 'x-forwarded-port']
     session:
         handler_id: null
-        save_path: '%kernel.project_dir%/var/cache/sessions'
+        save_path: /var/www/html/var/cache/sessions
         cookie_secure: auto
         cookie_httponly: true
         cookie_samesite: lax
