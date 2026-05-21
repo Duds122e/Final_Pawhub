@@ -1,6 +1,6 @@
 <?php
 
-// Diagnostics: /diag.php?key=pawhub-diag
+// Standalone diagnostics (not routed through Symfony): /diag.php?key=pawhub-diag
 if (($_GET['key'] ?? '') !== 'pawhub-diag') {
     http_response_code(404);
     exit;
@@ -11,7 +11,7 @@ header('Content-Type: text/plain; charset=utf-8');
 require dirname(__DIR__).'/vendor/autoload.php';
 
 $env = getenv('APP_ENV') ?: 'prod';
-$debug = filter_var(getenv('APP_DEBUG') ?: '1', FILTER_VALIDATE_BOOL);
+$debug = filter_var(getenv('APP_DEBUG') ?: '0', FILTER_VALIDATE_BOOL);
 
 try {
     $kernel = new App\Kernel($env, $debug);
@@ -31,14 +31,14 @@ try {
         }
     }
 
-    echo "\nTwig dashboard render:\n";
-    $html = $container->get('twig')->render('dashboard/index.html.twig', [
-        'pets' => 0,
-        'pending' => 0,
-        'appointments' => 0,
-        'services' => 0,
-    ]);
-    echo 'OK ('.strlen($html)." bytes)\n";
+    echo "\nRendering dashboard via controller:\n";
+    $request = Symfony\Component\HttpFoundation\Request::create('/dashboard', 'GET');
+    $response = $kernel->handle($request);
+    echo 'HTTP '.$response->getStatusCode().' ('.strlen($response->getContent())." bytes)\n";
+    if ($response->getStatusCode() >= 500) {
+        echo substr($response->getContent(), 0, 2000)."\n";
+    }
+    $kernel->terminate($request, $response);
 } catch (Throwable $e) {
     echo "FATAL: ".$e->getMessage()."\n\n".$e->getTraceAsString();
 }
