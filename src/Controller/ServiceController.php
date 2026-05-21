@@ -6,7 +6,9 @@ use App\Entity\Service;
 use App\Repository\ServiceRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,8 +32,8 @@ final class ServiceController extends AbstractController
         $service = new Service();
         $form = $this->createFormBuilder($service)
             ->add('name', TextType::class)
-            ->add('description', TextType::class)
-            ->add('price', TextType::class)
+            ->add('description', TextareaType::class, ['required' => false])
+            ->add('price', NumberType::class, ['html5' => true, 'scale' => 2])
             ->add('save', SubmitType::class, ['label' => 'Create'])
             ->getForm();
         $form->handleRequest($request);
@@ -55,8 +57,8 @@ final class ServiceController extends AbstractController
     {
         $form = $this->createFormBuilder($service)
             ->add('name', TextType::class)
-            ->add('description', TextType::class)
-            ->add('price', TextType::class)
+            ->add('description', TextareaType::class, ['required' => false])
+            ->add('price', NumberType::class, ['html5' => true, 'scale' => 2])
             ->add('save', SubmitType::class, ['label' => 'Update'])
             ->getForm();
         $form->handleRequest($request);

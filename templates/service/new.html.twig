@@ -92,6 +92,13 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(232, 90, 113, 0.4);
         }
+        .form-error-message,
+        .invalid-feedback,
+        ul.form-errors li {
+            color: #c0392b;
+            font-size: 0.9rem;
+            margin-top: 0.35rem;
+        }
         @media (max-width: 768px) {
             .page-wrapper {
                 padding: 20px;
@@ -115,11 +122,13 @@
         </div>
         <div class="service-form">
             {{ form_start(form) }}
+                {{ form_errors(form) }}
                 {{ form_row(form.name, {'attr': {'class': 'form-control'}}) }}
                 {{ form_row(form.description, {'attr': {'class': 'form-control', 'rows': '4'}}) }}
-                {{ form_row(form.price, {'attr': {'class': 'form-control'}}) }}
+                {{ form_row(form.price, {'attr': {'class': 'form-control', 'step': '0.01', 'min': '0'}}) }}
+                {{ form_widget(form._token) }}
                 <div class="form-actions">
-                    <button type="submit" class="btn-primary">
+                    <button type="submit" name="{{ form.save.vars.full_name }}" value="{{ form.save.vars.label }}" class="btn-primary">
                         <i class="fas fa-plus"></i> Create Service
                     </button>
                 </div>
