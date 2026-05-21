@@ -70,6 +70,7 @@ security:
         - { path: ^/api/docs.json$, roles: PUBLIC_ACCESS }  # API docs JSON
         - { path: ^/api/login, roles: PUBLIC_ACCESS }  # API login endpoint
         - { path: ^/api/register, roles: PUBLIC_ACCESS }  # API registration endpoint
+        - { path: ^/health\.php$, roles: PUBLIC_ACCESS }
         
         # Admin-only pages
         - { path: ^/admin, roles: ROLE_ADMIN }

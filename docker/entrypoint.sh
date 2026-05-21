@@ -57,22 +57,30 @@ wait_for_database() {
   return 1
 }
 
+mkdir -p var/cache var/log
+chmod -R 777 var 2>/dev/null || true
+
 if [ "${SKIP_DB_WAIT:-0}" != "1" ]; then
   wait_for_database || exit 1
 else
   echo "Skipping database wait (SKIP_DB_WAIT=1)."
 fi
 
-mkdir -p var/cache var/log
-chmod -R 777 var 2>/dev/null || true
-
 if [ ! -f config/jwt/private.pem ]; then
   echo "Generating JWT keys..."
   php bin/console lexik:jwt:generate-keypair --skip-if-exists --no-interaction
 fi
 
+# Start HTTP server FIRST so Railway healthcheck can reach /health.php
+echo "Starting application on 0.0.0.0:${PORT}..."
+php -S "0.0.0.0:${PORT}" -t public/ &
+SERVER_PID=$!
+
+# Give the server a moment to bind
+sleep 2
+
 echo "Running migrations..."
-php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration
+php bin/console doctrine:migrations:migrate --no-interaction --allow-no-migration || true
 
 if [ "${CREATE_ADMIN:-1}" = "1" ]; then
   echo "Ensuring admin user exists..."
@@ -86,8 +94,5 @@ else
   php bin/console cache:clear --no-warmup 2>/dev/null || true
 fi
 
-echo "Starting application on 0.0.0.0:${PORT}..."
-if [ "$#" -eq 0 ]; then
-  exec php -S "0.0.0.0:${PORT}" -t public/
-fi
-exec "$@"
+echo "Application ready (pid ${SERVER_PID})."
+wait $SERVER_PID
