@@ -87,12 +87,19 @@ if [ "${CREATE_ADMIN:-1}" = "1" ]; then
   php bin/console app:create-admin admin admin123 --force --no-interaction 2>/dev/null || true
 fi
 
+echo "Installing assets..."
+php bin/console assets:install public --no-interaction 2>/dev/null || true
+
 APP_ENV="${APP_ENV:-dev}"
 if [ "$APP_ENV" = "prod" ]; then
   php bin/console cache:clear --env=prod --no-warmup 2>/dev/null || true
+  php bin/console cache:warmup --env=prod --no-debug 2>/dev/null || true
 else
   php bin/console cache:clear --no-warmup 2>/dev/null || true
 fi
+
+# Verify app can boot (logs clear errors to Railway deploy logs)
+php bin/console about --env="${APP_ENV}" --no-interaction 2>&1 | head -5 || true
 
 echo "Application ready (pid ${SERVER_PID})."
 wait $SERVER_PID

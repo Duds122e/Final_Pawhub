@@ -36,9 +36,9 @@ COPY composer.json composer.lock symfony.lock ./
 RUN composer install --no-dev --no-interaction --prefer-dist --no-scripts --no-autoloader
 
 COPY . .
-COPY .env.example .env
 
 # Generate autoload + Symfony Runtime file without running cache:clear / importmap
+# Railway env vars override defaults at runtime (do not bake secrets into .env)
 RUN composer dump-autoload --optimize --classmap-authoritative --no-dev \
     && test -f vendor/autoload_runtime.php \
     && mkdir -p var/cache var/log public/bundles \
