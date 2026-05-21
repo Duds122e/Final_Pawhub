@@ -7,11 +7,11 @@ fi
 PORT="${PORT:-8000}"
 export PORT
 
-mkdir -p var/cache var/log config/jwt public/bundles
+mkdir -p var/cache/sessions var/log config/jwt public/bundles
 chmod -R 777 var 2>/dev/null || true
 
 echo "Starting server on 0.0.0.0:${PORT}..."
-php -S "0.0.0.0:${PORT}" -t public/ &
+php -S "0.0.0.0:${PORT}" -t public public/index.php &
 SERVER_PID=$!
 sleep 1
 
