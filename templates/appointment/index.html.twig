@@ -133,8 +133,8 @@
                         <tr>
                             <td>#{{ appointment.id }}</td>
                             <td>{{ appointment.dateTime|date('Y-m-d H:i') }}</td>
-                            <td>{{ appointment.user.username }}</td>
-                            <td>{{ appointment.pet.name }}</td>
+                            <td>{{ appointment.user ? appointment.user.username : 'N/A' }}</td>
+                            <td>{{ appointment.pet ? appointment.pet.name : 'N/A' }}</td>
                             <td>
                                 <a href="{{ path('appointment_show', {'id': appointment.id}) }}" class="btn-primary btn-sm btn-info" style="margin-right: 5px;">View</a>
                                 <a href="{{ path('appointment_edit', {'id': appointment.id}) }}" class="btn-primary btn-sm btn-warning" style="margin-right: 5px;">Edit</a>

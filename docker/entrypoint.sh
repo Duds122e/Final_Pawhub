@@ -54,7 +54,11 @@ sleep 1
   fi
 
   php bin/console assets:install public --no-interaction 2>/dev/null || true
-  php bin/console cache:clear --env="${APP_ENV:-prod}" --no-warmup 2>/dev/null || true
+  if [ -z "$DATABASE_URL" ]; then
+    echo "ERROR: DATABASE_URL is not set. Link MySQL on Railway."
+  fi
+
+  php bin/console cache:clear --env="${APP_ENV:-prod}" 2>/dev/null || true
 
   echo "Bootstrap complete."
 ) &

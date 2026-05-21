@@ -482,7 +482,7 @@
         <nav class="top-nav">
             <div class="profile" style="margin-left: auto;">
                 {% if app.user %}
-                    {{ app.user.username }}
+                    {{ app.user.username|default(app.user.userIdentifier) }}
                     {% if is_granted('ROLE_ADMIN') %}
                         <span style="font-size: 12px; color: #4A5C6A; margin-left: 10px;">(Admin)</span>
                     {% else %}

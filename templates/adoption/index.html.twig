@@ -153,7 +153,7 @@
                         <tr>
                             <td>{{ req.createdAt|date('Y-m-d') }}</td>
                             <td>{{ req.pet.name ?? 'N/A' }}</td>
-                            <td>{{ req.user.username ?? 'N/A' }}</td>
+                            <td>{{ req.user ? req.user.username : 'N/A' }}</td>
                             <td>
                                 <span class="status-badge status-{{ req.status|lower }}">
                                     {{ req.status }}

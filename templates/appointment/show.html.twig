@@ -155,7 +155,7 @@
                 </tr>
                 <tr>
                     <th>User</th>
-                    <td>{{ appointment.user.username }}</td>
+                    <td>{{ appointment.user ? appointment.user.username : 'N/A' }}</td>
                 </tr>
                 <tr>
                     <th>Pet</th>
