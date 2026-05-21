@@ -33,9 +33,13 @@ final class ApiAppointmentCatalogController extends AbstractController
             return new JsonResponse(['error' => 'Unauthorized'], 401);
         }
 
-        $rows = $this->appointments->findBy(['user' => $user], ['dateTime' => 'DESC']);
+        try {
+            $rows = $this->appointments->findBy(['user' => $user], ['dateTime' => 'DESC']);
 
-        return new JsonResponse(array_map(fn (Appointment $a) => $this->serialize($a), $rows));
+            return new JsonResponse(array_map(fn (Appointment $a) => $this->serialize($a), $rows));
+        } catch (\Throwable $e) {
+            return new JsonResponse(['error' => 'Could not load appointments: ' . $e->getMessage()], 500);
+        }
     }
 
     #[Route('/api/catalog/appointments', name: 'api_catalog_appointments_book', methods: ['POST'])]
@@ -63,7 +67,7 @@ final class ApiAppointmentCatalogController extends AbstractController
         }
 
         try {
-            $dateTime = new \DateTimeImmutable($dateTimeRaw);
+            $dateTime = new \DateTime($dateTimeRaw);
         } catch (\Exception) {
             return new JsonResponse(['error' => 'Invalid dateTime'], 400);
         }
@@ -75,7 +79,7 @@ final class ApiAppointmentCatalogController extends AbstractController
         $pet = new Pet();
         $pet->setName($petName !== '' ? $petName : trim($petSpecies . ' ' . $petBreed));
         $pet->setType($petSpecies !== '' ? $petSpecies : 'Pet');
-        $pet->setBreed($petBreed !== '' ? $petBreed : '—');
+        $pet->setBreed($petBreed !== '' ? $petBreed : '-');
         $pet->setAge(0);
         $pet->setStatus('Active');
 
@@ -101,14 +105,18 @@ final class ApiAppointmentCatalogController extends AbstractController
 
         if (!empty($data['petDob'])) {
             try {
-                $appointment->setPetDob(new \DateTimeImmutable((string) $data['petDob']));
+                $appointment->setPetDob(new \DateTime((string) $data['petDob']));
             } catch (\Exception) {
             }
         }
 
-        $this->em->persist($pet);
-        $this->em->persist($appointment);
-        $this->em->flush();
+        try {
+            $this->em->persist($pet);
+            $this->em->persist($appointment);
+            $this->em->flush();
+        } catch (\Throwable $e) {
+            return new JsonResponse(['error' => 'Could not save appointment: ' . $e->getMessage()], 500);
+        }
 
         return new JsonResponse($this->serialize($appointment), 201);
     }
