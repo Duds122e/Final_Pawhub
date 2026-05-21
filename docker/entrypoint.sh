@@ -4,6 +4,27 @@ if [ -z "$DATABASE_URL" ] && [ -n "$MYSQL_URL" ]; then
   export DATABASE_URL="$MYSQL_URL"
 fi
 
+# Doctrine needs serverVersion=8.0 on Railway MYSQL_URL (avoids "MySQL < 8" deprecation / wrong platform)
+normalize_database_url() {
+  if [ -z "$DATABASE_URL" ]; then
+    return
+  fi
+  case "$DATABASE_URL" in
+    *serverVersion=*|*server_version=*)
+      return
+      ;;
+  esac
+  case "$DATABASE_URL" in
+    *\?*)
+      export DATABASE_URL="${DATABASE_URL}&serverVersion=8.0&charset=utf8mb4"
+      ;;
+    *)
+      export DATABASE_URL="${DATABASE_URL}?serverVersion=8.0&charset=utf8mb4"
+      ;;
+  esac
+}
+normalize_database_url
+
 # Fix DEFAULT_URI when Railway variable points at localhost (common misconfiguration)
 if [ -n "$RAILWAY_PUBLIC_DOMAIN" ]; then
   export DEFAULT_URI="https://${RAILWAY_PUBLIC_DOMAIN}"
@@ -83,6 +104,9 @@ bootstrap_app() {
 }
 
 echo "DEFAULT_URI=${DEFAULT_URI}"
+if [ -n "$DATABASE_URL" ]; then
+  echo "DATABASE_URL configured (serverVersion present: $(echo "$DATABASE_URL" | grep -q 'serverVersion=' && echo yes || echo no))"
+fi
 echo "Starting server on 0.0.0.0:${PORT}..."
 php -S "0.0.0.0:${PORT}" -t public public/index_router.php &
 SERVER_PID=$!

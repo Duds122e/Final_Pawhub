@@ -38,10 +38,16 @@ final class ServiceController extends AbstractController
             ->getForm();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($service->getDescription() === null) {
+                $service->setDescription('');
+            }
             $em->persist($service);
             $em->flush();
             $this->addFlash('success', 'Service created.');
             return $this->redirectToRoute('app_service');
+        }
+        if ($form->isSubmitted()) {
+            $this->addFlash('error', 'Could not create service. Please check the form for errors.');
         }
         return $this->render('service/new.html.twig', ['form' => $form->createView()]);
     }
@@ -63,6 +69,9 @@ final class ServiceController extends AbstractController
             ->getForm();
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            if ($service->getDescription() === null) {
+                $service->setDescription('');
+            }
             $em->flush();
             // Log the edit action
             $log = new \App\Entity\SystemLog();
@@ -74,6 +83,9 @@ final class ServiceController extends AbstractController
             $em->flush();
             $this->addFlash('success', 'Service updated.');
             return $this->redirectToRoute('app_service');
+        }
+        if ($form->isSubmitted()) {
+            $this->addFlash('error', 'Could not update service. Please check the form for errors.');
         }
         return $this->render('service/edit.html.twig', ['form' => $form->createView(), 'service' => $service]);
     }

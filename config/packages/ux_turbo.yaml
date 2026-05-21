@@ -1,4 +1,4 @@
-# Enable stateless CSRF protection for forms and logins/logouts
+# Turbo is not enabled on most pages; do not require CSRF headers on form POST
 framework:
     csrf_protection:
-        check_header: true
+        check_header: false

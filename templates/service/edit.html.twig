@@ -126,13 +126,13 @@
                 {{ form_row(form.name, {'attr': {'class': 'form-control'}}) }}
                 {{ form_row(form.description, {'attr': {'class': 'form-control', 'rows': '4'}}) }}
                 {{ form_row(form.price, {'attr': {'class': 'form-control', 'step': '0.01', 'min': '0'}}) }}
-                {{ form_widget(form._token) }}
                 <div class="form-actions">
-                    <button type="submit" name="{{ form.save.vars.full_name }}" value="{{ form.save.vars.label }}" class="btn-primary">
-                        <i class="fas fa-save"></i> Update Service
-                    </button>
+                    {{ form_widget(form.save, {
+                        'label': 'Update Service',
+                        'attr': {'class': 'btn-primary'}
+                    }) }}
                 </div>
-            {{ form_end(form, {'render_rest': false}) }}
+            {{ form_end(form) }}
         </div>
     </div>
 </div>

@@ -1,9 +1,5 @@
-# Use session-backed CSRF for login (stateless CSRF breaks behind some proxies)
+# Session-backed CSRF for web forms (stateless CSRF needs Turbo/JS cookies; base layout does not load them)
 framework:
     form:
         csrf_protection:
             token_id: submit
-
-    csrf_protection:
-        stateless_token_ids:
-            - submit
