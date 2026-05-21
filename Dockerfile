@@ -25,10 +25,15 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Copy full app so Composer can run Symfony scripts (generates autoload_runtime.php)
+ENV APP_ENV=prod
+ENV APP_DEBUG=0
+ENV APP_SECRET=build_time_secret_replace_in_railway_vars
+ENV COMPOSER_ALLOW_SUPERUSER=1
+
 COPY . .
 
-# Must NOT use --no-scripts: Symfony Runtime plugin creates vendor/autoload_runtime.php
+# Prod APP_ENV avoids dev bundles during cache:clear in post-install-cmd.
+# Symfony Runtime plugin generates vendor/autoload_runtime.php on install.
 RUN composer install --no-dev --optimize-autoloader --no-interaction \
     && mkdir -p var/cache var/log \
     && chmod -R 777 var
@@ -36,8 +41,5 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction \
 COPY docker/entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN sed -i 's/\r$//' /usr/local/bin/docker-entrypoint.sh \
     && chmod +x /usr/local/bin/docker-entrypoint.sh
-
-ENV APP_ENV=prod
-ENV APP_DEBUG=0
 
 ENTRYPOINT ["docker-entrypoint.sh"]
