@@ -93,21 +93,37 @@ final class ServiceController extends AbstractController
     #[Route('/service/{id}/delete', name: 'app_service_delete', methods: ['POST'])]
     public function delete(Request $request, Service $service, EntityManagerInterface $em): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$service->getId(), $request->request->get('_token'))) {
-            $serviceName = $service->getName();
-            $serviceId = $service->getId();
+        if (!$this->isCsrfTokenValid('delete'.$service->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Could not delete service: invalid security token.');
+            return $this->redirectToRoute('app_service_show', ['id' => $service->getId()]);
+        }
+
+        $serviceName = $service->getName();
+        $serviceId = $service->getId();
+
+        try {
+            foreach ($service->getAppointments()->toArray() as $appointment) {
+                $appointment->setService(null);
+            }
             $em->remove($service);
             $em->flush();
-            // Log the delete action
-            $log = new \App\Entity\SystemLog();
-            $log->setType('DELETE');
-            $log->setMessage('Deleted service: ' . $serviceName . ' (ID: ' . $serviceId . ')');
-            $log->setUser($this->getUser());
-            $log->setIsRead(false);
-            $em->persist($log);
-            $em->flush();
+
+            $user = $this->getUser();
+            if ($user instanceof \App\Entity\User) {
+                $log = new \App\Entity\SystemLog();
+                $log->setType('DELETE');
+                $log->setMessage('Deleted service: ' . $serviceName . ' (ID: ' . $serviceId . ')');
+                $log->setUser($user);
+                $log->setIsRead(false);
+                $em->persist($log);
+                $em->flush();
+            }
+
             $this->addFlash('success', 'Service deleted.');
+        } catch (\Throwable) {
+            $this->addFlash('error', 'Could not delete service. Please try again.');
         }
+
         return $this->redirectToRoute('app_service');
     }
 }

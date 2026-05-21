@@ -101,22 +101,38 @@ final class PetController extends AbstractController
     #[Route('/pet/{id}/delete', name: 'app_pet_delete', methods: ['POST'])]
     public function delete(Request $request, Pet $pet, EntityManagerInterface $em): Response
     {
-        $token = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('delete'.$pet->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Could not delete pet: invalid security token.');
+            return $this->redirectToRoute('app_pet_show', ['id' => $pet->getId()]);
+        }
 
-        if ($this->isCsrfTokenValid('delete'.$pet->getId(), $token)) {
-            $petName = $pet->getName();
-            $petId = $pet->getId();
+        $petName = $pet->getName();
+        $petId = $pet->getId();
+
+        try {
+            foreach ($pet->getAdoptionRequests()->toArray() as $adoption) {
+                $em->remove($adoption);
+            }
+            foreach ($pet->getAppointments()->toArray() as $appointment) {
+                $em->remove($appointment);
+            }
             $em->remove($pet);
             $em->flush();
-            // Log the delete action
-            $log = new \App\Entity\SystemLog();
-            $log->setType('DELETE');
-            $log->setMessage('Deleted pet: ' . $petName . ' (ID: ' . $petId . ')');
-            $log->setUser($this->getUser());
-            $log->setIsRead(false);
-            $em->persist($log);
-            $em->flush();
+
+            $user = $this->getUser();
+            if ($user instanceof \App\Entity\User) {
+                $log = new \App\Entity\SystemLog();
+                $log->setType('DELETE');
+                $log->setMessage('Deleted pet: ' . $petName . ' (ID: ' . $petId . ')');
+                $log->setUser($user);
+                $log->setIsRead(false);
+                $em->persist($log);
+                $em->flush();
+            }
+
             $this->addFlash('success', 'Pet deleted.');
+        } catch (\Throwable) {
+            $this->addFlash('error', 'Could not delete pet. Remove linked appointments or adoption requests and try again.');
         }
 
         return $this->redirectToRoute('app_pet');

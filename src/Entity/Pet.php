@@ -60,13 +60,13 @@ class Pet
     /**
      * @var Collection<int, Appointment>
      */
-    #[ORM\OneToMany(targetEntity: Appointment::class, mappedBy: 'pet')]
+    #[ORM\OneToMany(targetEntity: Appointment::class, mappedBy: 'pet', cascade: ['remove'], orphanRemoval: true)]
     private Collection $appointments;
 
     /**
      * @var Collection<int, AdoptionRequest>
      */
-    #[ORM\OneToMany(targetEntity: AdoptionRequest::class, mappedBy: 'pet')]
+    #[ORM\OneToMany(targetEntity: AdoptionRequest::class, mappedBy: 'pet', cascade: ['remove'], orphanRemoval: true)]
     private Collection $adoptionRequests;
 
     public function __construct()
