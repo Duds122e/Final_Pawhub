@@ -12,7 +12,7 @@
             min-height: calc(100vh - 80px);
         }
         .adoption-container {
-            max-width: 800px;
+            max-width: 560px;
             margin: 0 auto;
         }
         .adoption-header {
@@ -32,28 +32,23 @@
             max-width: 500px;
             margin: 0 auto;
         }
+        .adoption-summary {
+            background: #FFF8F3;
+            border: 2px solid #FFE5E5;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin-bottom: 1.5rem;
+            color: #636E72;
+            font-size: 0.95rem;
+        }
+        .adoption-summary strong {
+            color: #2D3436;
+        }
         .adoption-form {
             background: white;
             border-radius: 20px;
             padding: 2rem 2.5rem;
             box-shadow: 0 10px 40px rgba(232, 90, 113, 0.08);
-        }
-        fieldset {
-            border: 2px solid #FFE5E5;
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            background: #FFF8F3;
-        }
-        fieldset legend {
-            background: white;
-            padding: 0.5rem 1rem;
-            border: 2px solid #FFE5E5;
-            border-radius: 12px;
-            font-family: 'Fredoka', cursive, sans-serif;
-            font-size: 1rem;
-            font-weight: 600;
-            color: #E85A71;
         }
         .form-group {
             margin-bottom: 1.25rem;
@@ -70,7 +65,6 @@
             border: 2px solid #FFE5E5;
             border-radius: 12px;
             font-size: 1rem;
-            transition: all 0.2s ease;
             background: white;
             font-family: 'Inter', sans-serif;
         }
@@ -86,6 +80,7 @@
             display: flex;
             justify-content: center;
             gap: 1rem;
+            flex-wrap: wrap;
         }
         .btn-primary {
             background: linear-gradient(90deg, #E85A71 0%, #FF8C42 100%);
@@ -97,40 +92,18 @@
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            box-shadow: 0 4px 15px rgba(232, 90, 113, 0.3);
         }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(232, 90, 113, 0.4);
+        .btn-secondary {
+            color: #E85A71;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 14px 20px;
         }
         .form-error-message,
-        .invalid-feedback,
         ul.form-errors li {
             color: #c0392b;
             font-size: 0.9rem;
             margin-top: 0.35rem;
-        }
-        .form-group.has-error .form-control,
-        select.is-invalid {
-            border-color: #c0392b;
-        }
-        @media (max-width: 768px) {
-            .page-wrapper {
-                padding: 20px;
-            }
-            .adoption-form {
-                padding: 1.5rem;
-            }
-            .adoption-header h1 {
-                font-size: 1.75rem;
-            }
-            fieldset {
-                padding: 1rem;
-            }
         }
     </style>
 {% endblock %}
@@ -139,37 +112,24 @@
 <div class="page-wrapper">
     <div class="adoption-container">
         <div class="adoption-header">
-            <h1>✏️ Edit Adoption Request</h1>
-            <p>Update the adoption request details below.</p>
+            <h1>✏️ Update Status</h1>
+            <p>Change the status for this adoption request.</p>
+        </div>
+        <div class="adoption-summary">
+            <div><strong>Pet:</strong> {{ adoption.pet ? adoption.pet.name : 'N/A' }}</div>
+            <div><strong>Requester:</strong> {{ adoption.user ? adoption.user.username : 'N/A' }}</div>
+            <div><strong>Submitted:</strong> {{ adoption.createdAt ? adoption.createdAt|date('Y-m-d') : 'N/A' }}</div>
         </div>
         <div class="adoption-form">
             {{ form_start(form) }}
                 {{ form_errors(form) }}
                 {{ form_row(form.status, {'attr': {'class': 'form-control'}}) }}
-                <fieldset>
-                    <legend>Home and Household Details</legend>
-                    {{ form_row(form.residenceType, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_row(form.householdMembers, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_row(form.homeAgreement, {'attr': {'class': 'form-control'}}) }}
-                </fieldset>
-                <fieldset>
-                    <legend>Pet History and Experience</legend>
-                    {{ form_row(form.currentPets, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_row(form.previousPets, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_row(form.spayNeuter, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_row(form.petExperience, {'attr': {'class': 'form-control'}}) }}
-                </fieldset>
-                <fieldset>
-                    <legend>Pet Care and Commitment</legend>
-                    {{ form_row(form.dailySchedule, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_row(form.financials, {'attr': {'class': 'form-control'}}) }}
-                    {{ form_row(form.contingencyPlan, {'attr': {'class': 'form-control'}}) }}
-                </fieldset>
                 <div class="form-actions">
                     {{ form_widget(form.save, {
                         'label': 'Update Request',
                         'attr': {'class': 'btn-primary'}
                     }) }}
+                    <a href="{{ path('app_adoption') }}" class="btn-secondary">Cancel</a>
                 </div>
             {{ form_end(form) }}
         </div>

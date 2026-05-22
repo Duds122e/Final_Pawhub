@@ -210,7 +210,7 @@ final class AdoptionController extends AbstractController
     #[Route('/adoption/{id}/edit', name: 'app_adoption_edit', requirements: ['id' => '\\d+'])]
     public function edit(Request $request, AdoptionRequest $adopt, EntityManagerInterface $em): Response
     {
-        $this->normalizeLegacyAdoptionFields($adopt);
+        $this->normalizeAdoptionStatus($adopt);
 
         $form = $this->createFormBuilder($adopt)
             ->add('status', ChoiceType::class, [
@@ -226,122 +226,6 @@ final class AdoptionController extends AbstractController
                 'placeholder' => false,
                 'attr' => ['class' => 'form-control'],
             ])
-            ->add('residenceType', ChoiceType::class, [
-                'choices' => $this->choicesWithCurrent($adopt->getResidenceType(), [
-                    'House' => 'House',
-                    'Apartment' => 'Apartment',
-                    'Condo' => 'Condo',
-                    'Mobile Home' => 'Mobile Home',
-                    'Other' => 'Other',
-                ]),
-                'required' => false,
-                'label' => 'Residence Type',
-                'placeholder' => '— Not set —',
-            ])
-            ->add('householdMembers', ChoiceType::class, [
-                'choices' => $this->choicesWithCurrent($adopt->getHouseholdMembers(), [
-                    'Lives Alone' => 'Lives Alone',
-                    '1-2 Members' => '1-2 Members',
-                    '3-4 Members' => '3-4 Members',
-                    '5+ Members' => '5+ Members',
-                    'With Children' => 'With Children',
-                    'Senior Community' => 'Senior Community',
-                ]),
-                'required' => false,
-                'label' => 'Household Members',
-                'placeholder' => '— Not set —',
-            ])
-            ->add('homeAgreement', ChoiceType::class, [
-                'choices' => $this->choicesWithCurrent($adopt->getHomeAgreement(), [
-                    'Yes' => 'Yes',
-                    'No' => 'No',
-                    'Need Permission' => 'Need Permission',
-                ]),
-                'required' => false,
-                'label' => 'Home Agreement',
-                'placeholder' => '— Not set —',
-            ])
-            ->add('currentPets', ChoiceType::class, [
-                'choices' => $this->choicesWithCurrent($adopt->getCurrentPets(), [
-                    'None' => 'None',
-                    'Dogs' => 'Dogs',
-                    'Cats' => 'Cats',
-                    'Other' => 'Other',
-                    'Multiple' => 'Multiple',
-                ]),
-                'required' => false,
-                'label' => 'Current Pets',
-                'placeholder' => '— Not set —',
-            ])
-            ->add('previousPets', ChoiceType::class, [
-                'choices' => $this->choicesWithCurrent($adopt->getPreviousPets(), [
-                    'Never Owned' => 'Never Owned',
-                    'Previously Owned' => 'Previously Owned',
-                    'Currently Own' => 'Currently Own',
-                    'Multiple Experiences' => 'Multiple Experiences',
-                ]),
-                'required' => false,
-                'label' => 'Previous Pets',
-                'placeholder' => '— Not set —',
-            ])
-            ->add('spayNeuter', ChoiceType::class, [
-                'choices' => $this->choicesWithCurrent($adopt->getSpayNeuter(), [
-                    'Yes, All Pets' => 'Yes, All Pets',
-                    'Willing To' => 'Willing To',
-                    'Unsure' => 'Unsure',
-                    'No' => 'No',
-                ]),
-                'required' => false,
-                'label' => 'Spay/Neuter',
-                'placeholder' => '— Not set —',
-            ])
-            ->add('petExperience', ChoiceType::class, [
-                'choices' => $this->choicesWithCurrent($adopt->getPetExperience(), [
-                    'Beginner' => 'Beginner',
-                    'Intermediate' => 'Intermediate',
-                    'Advanced' => 'Advanced',
-                    'Very Experienced' => 'Very Experienced',
-                ]),
-                'required' => false,
-                'label' => 'Experience Level',
-                'placeholder' => '— Not set —',
-            ])
-            ->add('dailySchedule', ChoiceType::class, [
-                'choices' => $this->choicesWithCurrent($adopt->getDailySchedule(), [
-                    'Full-time Care' => 'Full-time Care',
-                    'Part-time Care' => 'Part-time Care',
-                    'Flexible Schedule' => 'Flexible Schedule',
-                    'Outdoor Only' => 'Outdoor Only',
-                    'Unsure' => 'Unsure',
-                ]),
-                'required' => false,
-                'label' => 'Daily Schedule',
-                'placeholder' => '— Not set —',
-            ])
-            ->add('financials', ChoiceType::class, [
-                'choices' => $this->choicesWithCurrent($adopt->getFinancials(), [
-                    'Pet Insurance' => 'Pet Insurance',
-                    'Savings Available' => 'Savings Available',
-                    'Limited Budget' => 'Limited Budget',
-                    'Employer Benefits' => 'Employer Benefits',
-                    'Other' => 'Other',
-                ]),
-                'required' => false,
-                'label' => 'Financials',
-                'placeholder' => '— Not set —',
-            ])
-            ->add('contingencyPlan', ChoiceType::class, [
-                'choices' => $this->choicesWithCurrent($adopt->getContingencyPlan(), [
-                    'Family Support' => 'Family Support',
-                    'Professional Care' => 'Professional Care',
-                    'Boarding Facility' => 'Boarding Facility',
-                    'Friend/Neighbor' => 'Friend/Neighbor',
-                    'None Planned' => 'None Planned',
-                ]),
-                'required' => false,
-                'label' => 'Contingency Plan',
-                'placeholder' => '— Not set —',
-            ])
             ->add('save', SubmitType::class, ['label' => 'Update'])
             ->getForm();
         $form->handleRequest($request);
@@ -351,7 +235,7 @@ final class AdoptionController extends AbstractController
             return $this->redirectToRoute('app_adoption');
         }
         if ($form->isSubmitted()) {
-            $this->addFlash('error', 'Could not update adoption request. Please check the highlighted fields.');
+            $this->addFlash('error', 'Could not update adoption request. Please check the status field.');
         }
         return $this->render('adoption/edit.html.twig', ['form' => $form->createView(), 'adoption' => $adopt]);
     }
@@ -369,13 +253,24 @@ final class AdoptionController extends AbstractController
         return $choices;
     }
 
-    private function normalizeLegacyAdoptionFields(AdoptionRequest $adopt): void
+    private function normalizeAdoptionStatus(AdoptionRequest $adopt): void
     {
-        $legacy = ['1' => 'Yes', '0' => 'No', 'true' => 'Yes', 'false' => 'No'];
-        $home = $adopt->getHomeAgreement();
-        if ($home !== null && isset($legacy[strtolower($home)])) {
-            $adopt->setHomeAgreement($legacy[strtolower($home)]);
+        $status = $adopt->getStatus();
+        if ($status === null || $status === '') {
+            $adopt->setStatus('Pending');
+            return;
         }
+
+        $normalized = match (strtolower($status)) {
+            'pending' => 'Pending',
+            'approved' => 'Approved',
+            'rejected' => 'Rejected',
+            'under review' => 'Under Review',
+            'completed' => 'Completed',
+            default => $status,
+        };
+
+        $adopt->setStatus($normalized);
     }
 
     #[Route('/adoption/{id}/delete', name: 'app_adoption_delete', methods: ['POST'])]
