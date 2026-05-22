@@ -97,6 +97,9 @@ bootstrap_app() {
     fi
   fi
 
+  echo "Seeding adoptable pets (if none exist)..."
+  run_console app:seed-adoption-pets || true
+
   run_console assets:install public || true
   run_console cache:clear || true
 

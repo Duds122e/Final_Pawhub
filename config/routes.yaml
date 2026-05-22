@@ -34,6 +34,11 @@ api_catalog_appointments_book:
     controller: App\Controller\ApiAppointmentCatalogController::book
     methods: [POST]
 
+api_catalog_pets:
+    path: /api/catalog/pets
+    controller: App\Controller\ApiPetCatalogController::list
+    methods: [GET]
+
 # Appointment routes
 appointment_index:
     path: /appointment
