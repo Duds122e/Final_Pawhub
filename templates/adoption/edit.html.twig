@@ -107,6 +107,17 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(232, 90, 113, 0.4);
         }
+        .form-error-message,
+        .invalid-feedback,
+        ul.form-errors li {
+            color: #c0392b;
+            font-size: 0.9rem;
+            margin-top: 0.35rem;
+        }
+        .form-group.has-error .form-control,
+        select.is-invalid {
+            border-color: #c0392b;
+        }
         @media (max-width: 768px) {
             .page-wrapper {
                 padding: 20px;
@@ -133,6 +144,7 @@
         </div>
         <div class="adoption-form">
             {{ form_start(form) }}
+                {{ form_errors(form) }}
                 {{ form_row(form.status, {'attr': {'class': 'form-control'}}) }}
                 <fieldset>
                     <legend>Home and Household Details</legend>
@@ -154,11 +166,12 @@
                     {{ form_row(form.contingencyPlan, {'attr': {'class': 'form-control'}}) }}
                 </fieldset>
                 <div class="form-actions">
-                    <button type="submit" class="btn-primary">
-                        <i class="fas fa-save"></i> Update Request
-                    </button>
+                    {{ form_widget(form.save, {
+                        'label': 'Update Request',
+                        'attr': {'class': 'btn-primary'}
+                    }) }}
                 </div>
-            {{ form_end(form, {'render_rest': false}) }}
+            {{ form_end(form) }}
         </div>
     </div>
 </div>
