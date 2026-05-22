@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Service;
 use App\Repository\ServiceRepository;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -73,14 +74,6 @@ final class ServiceController extends AbstractController
                 $service->setDescription('');
             }
             $em->flush();
-            // Log the edit action
-            $log = new \App\Entity\SystemLog();
-            $log->setType('EDIT');
-            $log->setMessage('Edited service: ' . $service->getName() . ' (ID: ' . $service->getId() . ')');
-            $log->setUser($this->getUser());
-            $log->setIsRead(false);
-            $em->persist($log);
-            $em->flush();
             $this->addFlash('success', 'Service updated.');
             return $this->redirectToRoute('app_service');
         }
@@ -91,33 +84,19 @@ final class ServiceController extends AbstractController
     }
 
     #[Route('/service/{id}/delete', name: 'app_service_delete', methods: ['POST'])]
-    public function delete(Request $request, Service $service, EntityManagerInterface $em): Response
+    public function delete(Request $request, Service $service, EntityManagerInterface $em, Connection $conn): Response
     {
         if (!$this->isCsrfTokenValid('delete'.$service->getId(), $request->request->get('_token'))) {
             $this->addFlash('error', 'Could not delete service: invalid security token.');
             return $this->redirectToRoute('app_service_show', ['id' => $service->getId()]);
         }
 
-        $serviceName = $service->getName();
         $serviceId = $service->getId();
 
         try {
-            foreach ($service->getAppointments()->toArray() as $appointment) {
-                $appointment->setService(null);
-            }
-            $em->remove($service);
-            $em->flush();
-
-            $user = $this->getUser();
-            if ($user instanceof \App\Entity\User) {
-                $log = new \App\Entity\SystemLog();
-                $log->setType('DELETE');
-                $log->setMessage('Deleted service: ' . $serviceName . ' (ID: ' . $serviceId . ')');
-                $log->setUser($user);
-                $log->setIsRead(false);
-                $em->persist($log);
-                $em->flush();
-            }
+            $conn->executeStatement('UPDATE appointment SET service_id = NULL WHERE service_id = ?', [$serviceId]);
+            $conn->executeStatement('DELETE FROM service WHERE id = ?', [$serviceId]);
+            $em->clear();
 
             $this->addFlash('success', 'Service deleted.');
         } catch (\Throwable) {

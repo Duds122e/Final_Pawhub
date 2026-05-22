@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Pet;
 use App\Repository\PetRepository;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -80,14 +81,6 @@ final class PetController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
-            // Log the edit action
-            $log = new \App\Entity\SystemLog();
-            $log->setType('EDIT');
-            $log->setMessage('Edited pet: ' . $pet->getName() . ' (ID: ' . $pet->getId() . ')');
-            $log->setUser($this->getUser());
-            $log->setIsRead(false);
-            $em->persist($log);
-            $em->flush();
             $this->addFlash('success', 'Pet updated.');
             return $this->redirectToRoute('app_pet');
         }
@@ -99,40 +92,24 @@ final class PetController extends AbstractController
     }
 
     #[Route('/pet/{id}/delete', name: 'app_pet_delete', methods: ['POST'])]
-    public function delete(Request $request, Pet $pet, EntityManagerInterface $em): Response
+    public function delete(Request $request, Pet $pet, EntityManagerInterface $em, Connection $conn): Response
     {
         if (!$this->isCsrfTokenValid('delete'.$pet->getId(), $request->request->get('_token'))) {
             $this->addFlash('error', 'Could not delete pet: invalid security token.');
             return $this->redirectToRoute('app_pet_show', ['id' => $pet->getId()]);
         }
 
-        $petName = $pet->getName();
         $petId = $pet->getId();
 
         try {
-            foreach ($pet->getAdoptionRequests()->toArray() as $adoption) {
-                $em->remove($adoption);
-            }
-            foreach ($pet->getAppointments()->toArray() as $appointment) {
-                $em->remove($appointment);
-            }
-            $em->remove($pet);
-            $em->flush();
-
-            $user = $this->getUser();
-            if ($user instanceof \App\Entity\User) {
-                $log = new \App\Entity\SystemLog();
-                $log->setType('DELETE');
-                $log->setMessage('Deleted pet: ' . $petName . ' (ID: ' . $petId . ')');
-                $log->setUser($user);
-                $log->setIsRead(false);
-                $em->persist($log);
-                $em->flush();
-            }
+            $conn->executeStatement('DELETE FROM adoption_request WHERE pet_id = ?', [$petId]);
+            $conn->executeStatement('DELETE FROM appointment WHERE pet_id = ?', [$petId]);
+            $conn->executeStatement('DELETE FROM pet WHERE id = ?', [$petId]);
+            $em->clear();
 
             $this->addFlash('success', 'Pet deleted.');
         } catch (\Throwable) {
-            $this->addFlash('error', 'Could not delete pet. Remove linked appointments or adoption requests and try again.');
+            $this->addFlash('error', 'Could not delete pet. Please try again.');
         }
 
         return $this->redirectToRoute('app_pet');
