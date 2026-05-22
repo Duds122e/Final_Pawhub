@@ -207,50 +207,47 @@ final class AdoptionController extends AbstractController
         return $this->render('adoption/show.html.twig', ['adoption' => $adopt]);
     }
 
-    #[Route('/adoption/{id}/edit', name: 'app_adoption_edit', requirements: ['id' => '\\d+'])]
+    private const ADOPTION_STATUSES = [
+        'Pending',
+        'Approved',
+        'Rejected',
+        'Under Review',
+        'Completed',
+    ];
+
+    #[Route('/adoption/{id}/edit', name: 'app_adoption_edit', requirements: ['id' => '\\d+'], methods: ['GET', 'POST'])]
     public function edit(Request $request, AdoptionRequest $adopt, EntityManagerInterface $em): Response
     {
         $this->normalizeAdoptionStatus($adopt);
 
-        $form = $this->createFormBuilder($adopt)
-            ->add('status', ChoiceType::class, [
-                'choices' => $this->choicesWithCurrent($adopt->getStatus(), [
-                    'Pending' => 'Pending',
-                    'Approved' => 'Approved',
-                    'Rejected' => 'Rejected',
-                    'Under Review' => 'Under Review',
-                    'Completed' => 'Completed',
-                ]),
-                'label' => 'Status',
-                'required' => true,
-                'placeholder' => false,
-                'attr' => ['class' => 'form-control'],
-            ])
-            ->add('save', SubmitType::class, ['label' => 'Update'])
-            ->getForm();
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
-            $this->addFlash('success', 'Adoption request updated.');
-            return $this->redirectToRoute('app_adoption');
-        }
-        if ($form->isSubmitted()) {
-            $this->addFlash('error', 'Could not update adoption request. Please check the status field.');
-        }
-        return $this->render('adoption/edit.html.twig', ['form' => $form->createView(), 'adoption' => $adopt]);
-    }
+        if ($request->isMethod('POST')) {
+            $token = (string) $request->request->get('_token');
+            if (!$this->isCsrfTokenValid('adoption_update'.$adopt->getId(), $token)) {
+                $this->addFlash('danger', 'Session expired. Please try again.');
+                return $this->redirectToRoute('app_adoption_edit', ['id' => $adopt->getId()]);
+            }
 
-    /**
-     * @param array<string, string> $choices
-     * @return array<string, string>
-     */
-    private function choicesWithCurrent(?string $current, array $choices): array
-    {
-        if ($current !== null && $current !== '' && !in_array($current, $choices, true)) {
-            $choices['(Saved: ' . $current . ')'] = $current;
+            $status = (string) $request->request->get('status');
+            if (!in_array($status, self::ADOPTION_STATUSES, true)) {
+                $this->addFlash('danger', 'Please choose a valid status.');
+                return $this->redirectToRoute('app_adoption_edit', ['id' => $adopt->getId()]);
+            }
+
+            try {
+                $adopt->setStatus($status);
+                $em->flush();
+                $this->addFlash('success', 'Adoption request updated.');
+                return $this->redirectToRoute('app_adoption');
+            } catch (\Throwable) {
+                $this->addFlash('danger', 'Could not save. Please try again.');
+                return $this->redirectToRoute('app_adoption_edit', ['id' => $adopt->getId()]);
+            }
         }
 
-        return $choices;
+        return $this->render('adoption/edit.html.twig', [
+            'adoption' => $adopt,
+            'statuses' => self::ADOPTION_STATUSES,
+        ]);
     }
 
     private function normalizeAdoptionStatus(AdoptionRequest $adopt): void

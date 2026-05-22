@@ -29,8 +29,6 @@
         .adoption-header p {
             color: #636E72;
             font-size: 1rem;
-            max-width: 500px;
-            margin: 0 auto;
         }
         .adoption-summary {
             background: #FFF8F3;
@@ -41,18 +39,14 @@
             color: #636E72;
             font-size: 0.95rem;
         }
-        .adoption-summary strong {
-            color: #2D3436;
-        }
+        .adoption-summary strong { color: #2D3436; }
         .adoption-form {
             background: white;
             border-radius: 20px;
             padding: 2rem 2.5rem;
             box-shadow: 0 10px 40px rgba(232, 90, 113, 0.08);
         }
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
+        .form-group { margin-bottom: 1.25rem; }
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
@@ -66,12 +60,6 @@
             border-radius: 12px;
             font-size: 1rem;
             background: white;
-            font-family: 'Inter', sans-serif;
-        }
-        .form-control:focus {
-            border-color: #E85A71;
-            box-shadow: 0 0 0 3px rgba(232, 90, 113, 0.1);
-            outline: none;
         }
         .form-actions {
             margin-top: 2rem;
@@ -99,12 +87,6 @@
             font-weight: 600;
             padding: 14px 20px;
         }
-        .form-error-message,
-        ul.form-errors li {
-            color: #c0392b;
-            font-size: 0.9rem;
-            margin-top: 0.35rem;
-        }
     </style>
 {% endblock %}
 
@@ -119,19 +101,26 @@
             <div><strong>Pet:</strong> {{ adoption.pet ? adoption.pet.name : 'N/A' }}</div>
             <div><strong>Requester:</strong> {{ adoption.user ? adoption.user.username : 'N/A' }}</div>
             <div><strong>Submitted:</strong> {{ adoption.createdAt ? adoption.createdAt|date('Y-m-d') : 'N/A' }}</div>
+            <div><strong>Current status:</strong> {{ adoption.status }}</div>
         </div>
         <div class="adoption-form">
-            {{ form_start(form) }}
-                {{ form_errors(form) }}
-                {{ form_row(form.status, {'attr': {'class': 'form-control'}}) }}
+            <form method="post" action="{{ path('app_adoption_edit', {id: adoption.id}) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('adoption_update' ~ adoption.id) }}">
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status" name="status" class="form-control" required>
+                        {% for status in statuses %}
+                            <option value="{{ status }}" {{ adoption.status == status ? 'selected' : '' }}>
+                                {{ status }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
                 <div class="form-actions">
-                    {{ form_widget(form.save, {
-                        'label': 'Update Request',
-                        'attr': {'class': 'btn-primary'}
-                    }) }}
+                    <button type="submit" class="btn-primary">Update Request</button>
                     <a href="{{ path('app_adoption') }}" class="btn-secondary">Cancel</a>
                 </div>
-            {{ form_end(form) }}
+            </form>
         </div>
     </div>
 </div>

@@ -259,9 +259,14 @@
                 border: none;
             }
             
-            .alert-danger {
+            .alert-danger,
+            .alert-error {
                 background-color: #fde8e8;
                 color: #c53030;
+            }
+            .alert-success {
+                background-color: #e8f5e9;
+                color: #2e7d32;
             }
         </style>
     {% endblock %}
@@ -503,7 +508,7 @@
 
         {% for label, messages in app.flashes %}
             {% for message in messages %}
-                <div class="alert alert-{{ label }}" role="alert" style="margin: 1rem 0;">
+                <div class="alert alert-{{ label }}" role="alert" style="margin: 1rem 2rem; padding: 1rem 1.25rem; border-radius: 10px; font-weight: 600;{% if label in ['danger', 'error'] %} background: #fde8e8; color: #c53030;{% elseif label == 'success' %} background: #e8f5e9; color: #2e7d32;{% else %} background: #fff3e0; color: #e65100;{% endif %}">
                     {{ message }}
                 </div>
             {% endfor %}
