@@ -120,6 +120,32 @@
         .status-pending { background: #FFF3E0; color: #FF8C42; }
         .status-approved { background: #E8F5E9; color: #4CAF50; }
         .status-rejected { background: #FFEBEE; color: #E85A71; }
+        .status-form {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .status-form select {
+            padding: 0.4rem 0.6rem;
+            border: 2px solid #FFE5E5;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            background: white;
+        }
+        .status-form button {
+            background: #E85A71;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .actions {
+            white-space: nowrap;
+        }
     </style>
 {% endblock %}
 
@@ -155,12 +181,18 @@
                             <td>{{ req.pet.name ?? 'N/A' }}</td>
                             <td>{{ req.user ? req.user.username : 'N/A' }}</td>
                             <td>
-                                <span class="status-badge status-{{ req.status|lower }}">
-                                    {{ req.status }}
-                                </span>
+                                <form method="post" action="{{ path('app_adoption_status', {id: req.id}) }}" class="status-form">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('adoption_update' ~ req.id) }}">
+                                    <select name="status" aria-label="Status for {{ req.pet.name ?? 'request' }}">
+                                        {% for status in statuses %}
+                                            <option value="{{ status }}" {{ req.status == status ? 'selected' : '' }}>{{ status }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit">Save</button>
+                                </form>
                             </td>
                             <td style="text-align:right" class="actions">
-                                <a href="{{ path('app_adoption_show', {id: req.id}) }}">View</a> · 
+                                <a href="{{ path('app_adoption_show', {id: req.id}) }}">View</a>
                                 <a href="{{ path('app_adoption_edit', {id: req.id}) }}">Edit</a>
                             </td>
                         </tr>

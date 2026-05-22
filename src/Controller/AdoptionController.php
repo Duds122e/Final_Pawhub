@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\AdoptionRequest;
 use App\Repository\AdoptionRequestRepository;
+use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -22,7 +23,11 @@ final class AdoptionController extends AbstractController
         $requests = $adoptRepo->findAll();
         return $this->render('adoption/index.html.twig', [
             'requests' => $requests,
-            'pending' => count(array_filter($requests, fn($r) => $r->getStatus() === 'Pending')),
+            'statuses' => self::ADOPTION_STATUSES,
+            'pending' => count(array_filter(
+                $requests,
+                static fn (AdoptionRequest $r) => strtolower((string) $r->getStatus()) === 'pending'
+            )),
         ]);
     }
 
@@ -215,39 +220,60 @@ final class AdoptionController extends AbstractController
         'Completed',
     ];
 
+    #[Route('/adoption/{id}/status', name: 'app_adoption_status', requirements: ['id' => '\\d+'], methods: ['POST'])]
+    public function updateStatus(Request $request, AdoptionRequest $adopt, Connection $conn, EntityManagerInterface $em): Response
+    {
+        return $this->handleStatusUpdate($request, $adopt, $conn, $em, 'app_adoption');
+    }
+
     #[Route('/adoption/{id}/edit', name: 'app_adoption_edit', requirements: ['id' => '\\d+'], methods: ['GET', 'POST'])]
-    public function edit(Request $request, AdoptionRequest $adopt, EntityManagerInterface $em): Response
+    public function edit(Request $request, AdoptionRequest $adopt, Connection $conn, EntityManagerInterface $em): Response
     {
         $this->normalizeAdoptionStatus($adopt);
 
         if ($request->isMethod('POST')) {
-            $token = (string) $request->request->get('_token');
-            if (!$this->isCsrfTokenValid('adoption_update'.$adopt->getId(), $token)) {
-                $this->addFlash('danger', 'Session expired. Please try again.');
-                return $this->redirectToRoute('app_adoption_edit', ['id' => $adopt->getId()]);
-            }
-
-            $status = (string) $request->request->get('status');
-            if (!in_array($status, self::ADOPTION_STATUSES, true)) {
-                $this->addFlash('danger', 'Please choose a valid status.');
-                return $this->redirectToRoute('app_adoption_edit', ['id' => $adopt->getId()]);
-            }
-
-            try {
-                $adopt->setStatus($status);
-                $em->flush();
-                $this->addFlash('success', 'Adoption request updated.');
-                return $this->redirectToRoute('app_adoption');
-            } catch (\Throwable) {
-                $this->addFlash('danger', 'Could not save. Please try again.');
-                return $this->redirectToRoute('app_adoption_edit', ['id' => $adopt->getId()]);
-            }
+            return $this->handleStatusUpdate($request, $adopt, $conn, $em, 'app_adoption_edit', ['id' => $adopt->getId()]);
         }
 
         return $this->render('adoption/edit.html.twig', [
             'adoption' => $adopt,
             'statuses' => self::ADOPTION_STATUSES,
         ]);
+    }
+
+    private function handleStatusUpdate(
+        Request $request,
+        AdoptionRequest $adopt,
+        Connection $conn,
+        EntityManagerInterface $em,
+        string $errorRoute,
+        array $errorRouteParams = [],
+    ): Response {
+        $token = (string) $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('adoption_update'.$adopt->getId(), $token)) {
+            $this->addFlash('danger', 'Session expired. Please log out, log back in, and try again.');
+            return $this->redirectToRoute($errorRoute, $errorRouteParams);
+        }
+
+        $status = (string) $request->request->get('status');
+        if (!in_array($status, self::ADOPTION_STATUSES, true)) {
+            $this->addFlash('danger', 'Please choose a valid status.');
+            return $this->redirectToRoute($errorRoute, $errorRouteParams);
+        }
+
+        try {
+            $conn->executeStatement(
+                'UPDATE adoption_request SET status = ? WHERE id = ?',
+                [$status, $adopt->getId()]
+            );
+            $em->clear();
+            $this->addFlash('success', sprintf('Status updated to %s.', $status));
+        } catch (\Throwable) {
+            $this->addFlash('danger', 'Could not save status. Please try again.');
+            return $this->redirectToRoute($errorRoute, $errorRouteParams);
+        }
+
+        return $this->redirectToRoute('app_adoption');
     }
 
     private function normalizeAdoptionStatus(AdoptionRequest $adopt): void
