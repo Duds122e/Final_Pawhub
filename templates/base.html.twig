@@ -518,5 +518,9 @@
     </main>
 
 </div>
+{% block javascripts %}{% endblock %}
+{% if app.user %}
+<script src="{{ asset('js/admin-auto-refresh.js') }}" defer></script>
+{% endif %}
 </body>
 </html>

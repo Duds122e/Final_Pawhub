@@ -1,0 +1,20 @@
+{% for appointment in appointments %}
+    <tr data-refresh-row-id="{{ appointment.id }}">
+        <td>#{{ appointment.id }}</td>
+        <td>{{ appointment.dateTime|date('Y-m-d H:i') }}</td>
+        <td>{{ appointment.user ? appointment.user.username : 'N/A' }}</td>
+        <td>{{ appointment.pet ? appointment.pet.name : 'N/A' }}</td>
+        <td>
+            <a href="{{ path('appointment_show', {'id': appointment.id}) }}" class="btn-primary btn-sm btn-info" style="margin-right: 5px;">View</a>
+            <a href="{{ path('appointment_edit', {'id': appointment.id}) }}" class="btn-primary btn-sm btn-warning" style="margin-right: 5px;">Edit</a>
+            <form method="post" action="{{ path('appointment_delete', {'id': appointment.id}) }}" style="display:inline-block" onsubmit="return confirm('Are you sure?');">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ appointment.id) }}">
+                <button class="btn-primary btn-sm btn-danger" style="border: none;">Delete</button>
+            </form>
+        </td>
+    </tr>
+{% else %}
+    <tr data-refresh-empty>
+        <td colspan="5" class="empty-state">No appointments found.</td>
+    </tr>
+{% endfor %}

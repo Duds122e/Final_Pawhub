@@ -1,0 +1,26 @@
+{% for req in requests|default([]) %}
+    <tr data-refresh-row-id="{{ req.id }}">
+        <td>{{ req.createdAt|date('Y-m-d') }}</td>
+        <td>{{ req.pet.name ?? 'N/A' }}</td>
+        <td>{{ req.user ? req.user.username : 'N/A' }}</td>
+        <td>
+            <form method="post" action="{{ path('app_adoption_status', {id: req.id}) }}" class="status-form">
+                <input type="hidden" name="_token" value="{{ csrf_token('adoption_update' ~ req.id) }}">
+                <select name="status" aria-label="Status for {{ req.pet.name ?? 'request' }}">
+                    {% for status in statuses %}
+                        <option value="{{ status }}" {{ req.status == status ? 'selected' : '' }}>{{ status }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Save</button>
+            </form>
+        </td>
+        <td style="text-align:right" class="actions">
+            <a href="{{ path('app_adoption_show', {id: req.id}) }}">View</a>
+            <a href="{{ path('app_adoption_edit', {id: req.id}) }}">Edit</a>
+        </td>
+    </tr>
+{% else %}
+    <tr data-refresh-empty>
+        <td colspan="5" class="empty-state">No adoption requests.</td>
+    </tr>
+{% endfor %}

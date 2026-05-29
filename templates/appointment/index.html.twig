@@ -104,11 +104,18 @@
             color: #636E72;
             font-size: 1rem;
         }
+
+        .live-refresh-pulse .table-card {
+            box-shadow: 0 0 0 2px rgba(232, 90, 113, 0.35), 0 10px 40px rgba(232, 90, 113, 0.08);
+        }
     </style>
 {% endblock %}
 
 {% block body %}
-<div class="page-wrapper">
+<div class="page-wrapper"
+     data-auto-refresh="appointments"
+     data-refresh-url="{{ path('admin_refresh_appointments') }}"
+     data-refresh-version="">
     <div class="page-container">
         <div class="page-header">
             <h2>📅 Appointments</h2>
@@ -128,7 +135,7 @@
                         <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody data-refresh-target="tbody">
                     {% for appointment in appointments %}
                         <tr>
                             <td>#{{ appointment.id }}</td>

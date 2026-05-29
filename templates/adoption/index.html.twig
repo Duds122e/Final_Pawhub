@@ -146,11 +146,19 @@
         .actions {
             white-space: nowrap;
         }
+
+        .live-refresh-pulse .table-card,
+        .live-refresh-pulse .stats-bar {
+            box-shadow: 0 0 0 2px rgba(232, 90, 113, 0.35), 0 4px 15px rgba(232, 90, 113, 0.08);
+        }
     </style>
 {% endblock %}
 
 {% block body %}
-<div class="page-wrapper">
+<div class="page-wrapper"
+     data-auto-refresh="adoption"
+     data-refresh-url="{{ path('admin_refresh_adoptions') }}"
+     data-refresh-version="">
     <div class="page-container">
         <div class="page-header">
             <h2>💝 Adoption Requests</h2>
@@ -160,7 +168,7 @@
         </div>
 
         <div class="stats-bar">
-            Pending: <strong>{{ pending|default(0) }}</strong>
+            Pending: <strong data-refresh-target="pending">{{ pending|default(0) }}</strong>
         </div>
 
         <div class="table-card">
@@ -174,7 +182,7 @@
                         <th style="text-align:right">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody data-refresh-target="tbody">
                     {% for req in requests|default([]) %}
                         <tr>
                             <td>{{ req.createdAt|date('Y-m-d') }}</td>

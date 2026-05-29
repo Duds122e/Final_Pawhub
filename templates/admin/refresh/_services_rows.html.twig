@@ -1,0 +1,15 @@
+{% for svc in service_list|default([]) %}
+    <tr data-refresh-row-id="{{ svc.id }}">
+        <td>{{ svc.name }}</td>
+        <td>{{ svc.description }}</td>
+        <td class="price-tag">₱{{ svc.price }}</td>
+        <td style="text-align:right" class="actions">
+            <a href="{{ path('app_service_show', {id: svc.id}) }}">View</a> ·
+            <a href="{{ path('app_service_edit', {id: svc.id}) }}">Edit</a>
+        </td>
+    </tr>
+{% else %}
+    <tr data-refresh-empty>
+        <td colspan="4" class="empty-state">No services defined.</td>
+    </tr>
+{% endfor %}
