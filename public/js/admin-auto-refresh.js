@@ -4,8 +4,8 @@
 (function () {
   'use strict';
 
-  const POLL_MS = 5000;
-  const DASHBOARD_POLL_MS = 8000;
+  const POLL_MS = 2000;
+  const DASHBOARD_POLL_MS = 2000;
 
   const root = document.querySelector('[data-auto-refresh]');
   if (!root) {
